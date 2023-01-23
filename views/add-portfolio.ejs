@@ -1,0 +1,61 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="card">
+        <form action="/add" method="post">
+            <div class="card-body">
+                <h5 class="card-title">Add your Portfolio</h5>
+
+                <div class="form-check">
+                    <label for="title" class="form-label">Portfolio Title</label>
+                    <input id="title" name="title" type="text" class="form-control" required autofocus>
+                </div>
+
+                <div class="form-check">
+                    <label for="headerImage" class="form-label">Portfolio Image</label>
+                    <input id="headerImage" name="headerImage" type="text" class="form-control">
+                </div>
+
+                <div class="form-check">
+                    <label for="contextImage" class="form-label">Image One of Three</label>
+                    <input id="contextImage" name="contextImage" type="text" class="form-control">
+                </div>
+
+                <div class="form-check">
+                    <label for="contextImage2" class="form-label">Image Two of Three</label>
+                    <input id="contextImage2" name="contextImage2" type="text" class="form-control">
+                </div>
+
+                <div class="form-check">
+                    <label for="contextImage3" class="form-label">Image Three of Three</label>
+                    <input id="contextImage3" name="contextImage3" type="text" class="form-control">
+                </div>
+
+                <div class="form-check">
+                    <label for="live" class="form-label">Live Demo</label>
+                    <input id="live" name="live" type="text" class="form-control">
+                </div>
+
+                <div class="form-check">
+                    <label for="tags" class="form-label">Skill Tags</label>
+                    <input id="tags" name="tags" type="text" class="form-control" placeholder="Fintech, Adobe, VSCode">
+                </div>
+
+                <br>
+
+                <div class="form-check">
+                  <span class="input-group-text">With textarea</span>
+                  <textarea name="description" class="form-control" aria-label="With textarea"></textarea>
+                </div>
+
+                <br>
+
+                <div class="form-check">
+                    <input type="submit" value="Add Portfolio" class="btn btn-primary btn-block">
+                </div>
+            </div>
+        </form>
+    </div>
+
+<%- include("_footer") %>

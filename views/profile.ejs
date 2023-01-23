@@ -1,0 +1,49 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="container-fluid">
+        <div class="card">
+          <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
+          <div class="card-body">
+            <h3><%= user.name() %></h3>
+            <p>Joined on <%= user.createdAt %></p>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><%= user.purpose %></li>
+            <li class="list-group-item"><%= user.experience%></li>
+          </ul>
+          <div class="card-body">
+            <% if ((currentUser) && currentUser.id !== user.id) {%>
+              <form action="/<%= user.name() %>/add" method="post">
+                <button class="btn btn-primary">Add as a Friend</button>
+              </form>
+            <% }%>
+          </div>
+            <% if (portfolios) { %>
+                <ul>
+                    <% portfolios.forEach(function(portfolio) {%>
+                        <div class="card" style="width: 18rem">
+                            <a href="/<%= portfolio.title %>">
+                                <img alt="Header Image" src="<%= portfolio.headerImage %>" style="width: 18rem">
+                            </a>
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <%= portfolio.description %>
+                                </p>
+                            </div>
+                        </div>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <ul></ul>
+            <% } %>
+            <% if ((currentUser) && (currentUser.id === user.id)) { %>
+                <a class="btn btn-primary" href="/users/<%= user.name() %>/edit">Edit your profile</a>
+            <% }%>
+        </div>
+    </div>
+
+    <br>
+
+<%- include("_footer") %>

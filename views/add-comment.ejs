@@ -1,0 +1,28 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="row">
+        <div class="card">
+            <div class="col">
+                <form action="/portfolios/<%= portfolio.title %>/add_comment" method="post">
+                    <div class="card-body">
+                        <h5 class="card-title">Add your Comment</h5>
+
+                        <br>
+
+                        <div class="input-group">
+                          <span class="input-group-text">Textarea</span>
+                          <textarea name="comment" class="form-control" aria-label="Textarea"></textarea>
+                        </div>
+
+                        <br>
+
+                        <input type="submit" value="Add Comment" class="btn btn-primary btn-block">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+<%- include("_footer") %>

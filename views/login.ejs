@@ -1,0 +1,23 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="container-fluid center-screen">
+        <div class="card">
+            <form action="/login" method="post">
+                <div class="card-body">
+                    <h5 class="card-title">Login</h5>
+
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
+                    <br>
+                    <input type="submit" value="Login" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+
+<%- include("_footer") %>

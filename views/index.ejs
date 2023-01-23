@@ -1,0 +1,31 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="container text-center">
+        <h1>Welcome to Portfolios</h1>
+        <div class="row justify-content-md-center">
+            <% portfolios.forEach(function(portfolio) {%>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <%= portfolio.title %> by <strong><%= portfolio.author %></strong>
+                        </div>
+                        <div class="card-body">
+                            <a href="/portfolios/<%= portfolio.title %>">
+                                <img alt="Header Image" src="<%= portfolio.headerImage %>">
+                            </a>
+                            <p class="card-text">
+                                <%= portfolio.description %>
+                            </p>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <br>
+
+<%- include("_footer") %>

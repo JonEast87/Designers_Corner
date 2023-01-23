@@ -1,0 +1,27 @@
+nav {
+    background-color: #F7F5FF;
+}
+
+h1, h2, .card-header {
+    font-family: Roboto, sans-serif;
+}
+
+p,.card-body {
+    font-family: "Roboto Slab", serif;
+}
+
+.card-footer {
+    font-family: "Roboto Mono", monospace;
+}
+
+.card {
+    background-color: #F7F5FF;
+}
+
+.btn-bd-primary {
+    --bs-btn-color: #3A00E5;
+}
+
+.info {
+    background-color: #F7F5FF;
+}

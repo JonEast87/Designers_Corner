@@ -1,0 +1,81 @@
+<%- include("_header") %>
+
+    <br>
+
+    <div class="container-fluid center-screen">
+        <div class="card">
+            <form action="/signup" method="post">
+                <div class="card-body">
+                    <h5 class="card-title">Signup</h5>
+
+                    <div class="form-check">
+                        <label for="username" class="form-label">Username</label>
+                        <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+                    </div>
+
+                    <div class="form-check">
+                        <label for="phoneNumber" class="form-label">Phone Number</label>
+                        <input id="phoneNumber" name="phoneNumber" type="number" class="form-control" placeholder="123-456-7890" required>
+                    </div>
+
+                    <div class="form-check">
+                        <label for="password" class="form-label">Password</label>
+                        <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
+                    </div>
+
+                    <div class="form-check">
+                        <label for="profileImage" class="form-label">Profile Image</label>
+                        <input id="profileImage" name="profileImage" type="text" class="form-control">
+                    </div>
+
+                    <br>
+
+                    <div class="form-check">
+                        <label>What is your purpose?</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="mentor" name="purpose" type="radio" class="form-check-input" value="mentor">
+                        <label for="mentor" class="form-check-label">Mentor</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="mentee" name="purpose" type="radio" class="form-check-input" value="mentee">
+                        <label for="mentee" class="form-check-label">Mentee</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="job" name="purpose" type="radio" class="form-check-input" value="job">
+                        <label for="job" class="form-check-label">Job Seeker</label>
+                    </div>
+
+                    <br>
+
+                    <div class="form-check">
+                        <label>Experience Level</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="junior" name="experience" type="radio" class="form-check-input" value="junior">
+                        <label for="junior" class="form-check-label">Junior Level</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="middle" name="experience" type="radio" class="form-check-input" value="middle">
+                        <label for="middle" class="form-check-label">Middle Level</label>
+                    </div>
+
+                    <div class="form-check">
+                        <input id="senior" name="experience" type="radio" class="form-check-input" value="senior">
+                        <label for="senior" class="form-check-label">Senior Level</label>
+                    </div>
+
+                    <br>
+
+                    <input type="submit" value="Sign Up" class="btn btn-primary btn-block">
+                </div>
+            </form>
+        </div>
+    </div>
+
+<%- include("_footer") %>
