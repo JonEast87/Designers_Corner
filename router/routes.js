@@ -1,3 +1,4 @@
+const ejs = require("ejs");
 const express = require("express");
 const passport = require("passport");
 
@@ -13,7 +14,6 @@ app.use(function(req, res, next) {
     res.locals.infos = req.flash("info");
     next();
 });
-
 
 // --- Authentication and Registration --- //
 function ensureAuthenticated(req, res, next) {
@@ -84,7 +84,10 @@ app.get("/users/:username", ensureAuthenticated, async function(req, res, next) 
     // Using async call since this function returns more than one promise
     User.findOne({ username: req.params.username }, async function(err, user) {
         if (err) return next(err);
-        if (!user) return next(404);
+        if (!user) {
+            console.log("no user");
+            return next(404);
+        }
         const portfolios = await Portfolio.find({ authorId: user.id});
         res.render("profile", { user: user, portfolios: portfolios });
     });
@@ -174,14 +177,16 @@ app.post("/add", ensureAuthenticated, function(req, res, next) {
 });
 
 // --- READ PORTFOLIO --- //
-app.get("/portfolios/:portfolio", async function(req, res, next) {
+app.get("/portfolios/:portfolio", async (req, res, next) => {
     // Using async call since this function returns more than one promise
-    const comment = await Comment.find({ portfolio: req.params.portfolio });
-    Portfolio.findOne({ title: req.params.portfolio }, function(err, portfolio) {
-        if (err) return next(err);
-        if (!portfolio) return next(404);
-        res.render("view-portfolio", { portfolio: portfolio, comments: comment });
-    });
+    try {
+        const comment = await Comment.find({ portfolio: req.params.portfolio });
+        const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: comment });
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "Post does not match." });
+    }
 });
 
 // --- UPDATE PORTFOLIO --- //
@@ -193,27 +198,34 @@ app.get("/portfolios/:portfolio", async function(req, res, next) {
 // ---Comments--- //
 
 // --- CREATE COMMENT --- //
-app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, function(req, res, next) {
+app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     /* CREATE method that captures the entry input and saves it to the Comment model,
      it is associated with its Portfolio by including the Portfolio id
      allowing easy rendering on the HTML/EJS file */
-    const newComment = new Comment({
-       authorId: res.locals.currentUser._id,
-       author: res.locals.currentUser.username,
-       portfolio: req.params.portfolio,
-       comment: req.body.comment
-   });
-   newComment.save(next);
-   res.redirect("/");
+    try {
+        const newComment = new Comment({
+           authorId: res.locals.currentUser._id,
+           author: res.locals.currentUser.username,
+           portfolio: req.params.portfolio,
+           comment: req.body.comment
+       });
+       await newComment.save(next);
+       res.status(201).redirect("/");
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "Post does not match." });
+    }
 });
 
 // --- READ COMMENT --- //
-app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, function(req, res, next) {
-    Portfolio.findOne({ title: req.params.portfolio }, function(err, portfolio) {
-        if (err) return next(err);
-        if (!portfolio) return next(404);
-        res.render("add-comment", { portfolio: portfolio });
-    });
+app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
+    try {
+        const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        res.status(200).render("add-comment", { portfolio: portfolio });
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "No portfolio exists for this comment." });
+    }
 });
 
 // --- UPDATE COMMENT --- //
