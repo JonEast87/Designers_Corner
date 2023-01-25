@@ -48,31 +48,29 @@ app.get("/signup", function(req, res) {
     res.render("signup");
 });
 
-app.post("/signup", function(req, res, next) {
+app.post("/signup", async (req, res, next) => {
     // CREATE method that checks if User already exists, if not than a new one is created in that username
-    const experience = req.body.experience;
-    const password = req.body.password;
-    const phoneNumber = req.body.phoneNumber;
-    const profileImage = req.body.profileImage;
-    const purpose = req.body.purpose;
-    const username = req.body.username;
+   const newUser = new User({
+      experience: req.body.experience,
+      password: req.body.password,
+      profileImage: req.body.profileImage,
+      phoneNumber: req.body.phoneNumber,
+      purpose: req.body.purpose,
+      username: req.body.username,
+    });
 
-    User.findOne({ username: username }, function(err, user) {
-       if (err) return next(err);
-       if (user) {
-           req.flash("error", "User already exists.");
-           return res.redirect("/signup");
-       }
-       const newUser = new User({
-          experience: experience,
-          password: password,
-          profileImage: profileImage,
-          phoneNumber: phoneNumber,
-          purpose: purpose,
-          username: username,
-        });
-       newUser.save(next);
-     });
+    try {
+        let user = User.findOne({ username: req.params.username });
+        if (user) {
+            req.flash("error", "This user already exists. Please choose a different name.");
+            res.status(409);
+            return res.redirect("/signup");
+        }
+        await newUser.save(next);
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "Resource not found." });
+    }
 }, passport.authenticate("login", {
     successRedirect: "/",
     failureRedirect: "/signup",
@@ -80,29 +78,30 @@ app.post("/signup", function(req, res, next) {
 }));
 
 // --- READ USER ---
-app.get("/users/:username", ensureAuthenticated, async function(req, res, next) {
+app.get("/users/:username", ensureAuthenticated, async (req, res, next) => {
     // Using async call since this function returns more than one promise
-    User.findOne({ username: req.params.username }, async function(err, user) {
-        if (err) return next(err);
-        if (!user) {
-            console.log("no user");
-            return next(404);
-        }
+    try {
+        let user = await User.findOne({ username: req.params.username });
         const portfolios = await Portfolio.find({ authorId: user.id});
-        res.render("profile", { user: user, portfolios: portfolios });
-    });
+        res.status(200).render("profile", { user: user, portfolios: portfolios });
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "User does not match." });
+    }
 });
 
 // --- UPDATE USER ---
-app.get("/users/:username/edit", ensureAuthenticated, function(req, res, next) {
-    User.findOne({ username: req.params.username }, async function(err, user) {
-        if (err) return next(err);
-        if (!user) return next(404);
-        res.render("edit", { user: user });
-    });
+app.get("/users/:username/edit", ensureAuthenticated, async (req, res, next) => {
+    try {
+        let user = await User.findOne({ username: req.params.username });
+        res.status(200).render("edit", { user: user });
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "User does not match." });
+    }
 });
 
-app.post("/users/:username/edit", ensureAuthenticated, function(req, res, next) {
+app.post("/users/:username", ensureAuthenticated, async (req, res, next) => {
     // Simple UPDATE function that captures any changed made in the variable fields and saves it via mongoose .save()
     req.user.experience = req.body.experience;
     req.user.password = req.body.password;
@@ -110,14 +109,37 @@ app.post("/users/:username/edit", ensureAuthenticated, function(req, res, next) 
     req.user.phoneNumber = req.body.phoneNumber;
     req.user.purpose = req.body.purpose;
 
-    req.user.save(function(err) {
-        if (err) {
-            next(err);
-            return;
-        }
-        req.flash("info", "Profile updated.");
-        res.redirect("/users/" + req.user.username);
-    });
+    try {
+        let user = await User.findOne({ username: req.params.username });
+        await User.findByIdAndUpdate(user.id, req.user);
+        res.status(201).redirect("/users/" + req.user.username);
+    } catch (error) {
+        res.status(404);
+        res.send({ error: "User does not match." });
+    }
+});
+
+app.delete("/delete/:username", async (req, res) => {
+   /* Upon user deletion this function as a manual cascade that searches for any comments / portfolios the user
+   owns and removes thus as well. */
+    try {
+       let user = await User.findOne({ username: req.params.username });
+       await User.findByIdAndDelete(user.id, req.user);
+       await Portfolio.deleteMany({ authorId: user.id, name: { $gte: req.params.username }}).then(function() {
+           console.log("Portfolio deleted.");
+       }).catch(function(error) {
+           console.log(error);
+       });
+       await Comment.deleteMany({ authorId: user.id, name: { $gte: req.params.username }}).then(function() {
+           console.log("Comments deleted.");
+       }).catch(function(error) {
+           console.log(error);
+       });
+       res.status(200).redirect("/");
+   } catch (error) {
+       res.status(404);
+       res.send({ error: "User does not exists." });
+   }
 });
 
 // --- ADD FRIEND --- //

@@ -39,7 +39,11 @@
                 <ul></ul>
             <% } %>
             <% if ((currentUser) && (currentUser.id === user.id)) { %>
-                <a class="btn btn-primary" href="/users/<%= user.name() %>/edit">Edit your profile</a>
+                <a class="btn btn-primary" href="/users/<%= user.name() %>/edit">EDIT</a>
+                <br>
+                <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
+                    <button class="btn btn-danger">DELETE</button>
+                </form>
             <% }%>
         </div>
     </div>

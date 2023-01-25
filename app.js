@@ -3,6 +3,7 @@ const dotenv = require('dotenv').config();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
+const methodOverride = require("method-override");
 const mongoose = require("./config/db.js");
 const MongoStore = require("connect-mongo");
 const path = require("path");
@@ -36,6 +37,7 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(methodOverride("_method"));
 app.use(routes);
 
 module.exports = app;
