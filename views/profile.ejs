@@ -15,7 +15,7 @@
           </ul>
           <div class="card-body">
             <% if ((currentUser) && currentUser.id !== user.id) {%>
-              <form action="/<%= user.name() %>/add" method="post">
+              <form action="/users/<%= user.name() %>/add" method="post">
                 <button class="btn btn-primary">Add as a Friend</button>
               </form>
             <% }%>
@@ -39,8 +39,9 @@
                 <ul></ul>
             <% } %>
             <% if ((currentUser) && (currentUser.id === user.id)) { %>
-                <a class="btn btn-primary" href="/users/<%= user.name() %>/edit">EDIT</a>
-                <br>
+                <form action="/users/<%= user.name() %>/edit" method="get">
+                    <button class="btn btn-primary">EDIT</button>
+                </form>
                 <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
                     <button class="btn btn-danger">DELETE</button>
                 </form>

@@ -58,9 +58,9 @@ app.post("/signup", async (req, res, next) => {
       purpose: req.body.purpose,
       username: req.body.username,
     });
+    let user = await User.findOne({ username: req.params.username });
 
     try {
-        let user = User.findOne({ username: req.params.username });
         if (user) {
             req.flash("error", "This user already exists. Please choose a different name.");
             res.status(409);
@@ -68,8 +68,7 @@ app.post("/signup", async (req, res, next) => {
         }
         await newUser.save(next);
     } catch (error) {
-        res.status(404);
-        res.send({ error: "Resource not found." });
+        res.status(404).send({ error: "Resource not found." });
     }
 }, passport.authenticate("login", {
     successRedirect: "/",
@@ -78,26 +77,24 @@ app.post("/signup", async (req, res, next) => {
 }));
 
 // --- READ USER ---
-app.get("/users/:username", ensureAuthenticated, async (req, res, next) => {
+app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     // Using async call since this function returns more than one promise
     try {
         let user = await User.findOne({ username: req.params.username });
         const portfolios = await Portfolio.find({ authorId: user.id});
         res.status(200).render("profile", { user: user, portfolios: portfolios });
     } catch (error) {
-        res.status(404);
-        res.send({ error: "User does not match." });
+        res.status(404).send({ error: "User does not match." });
     }
 });
 
 // --- UPDATE USER ---
-app.get("/users/:username/edit", ensureAuthenticated, async (req, res, next) => {
+app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit", { user: user });
     } catch (error) {
-        res.status(404);
-        res.send({ error: "User does not match." });
+        res.status(404).send({ error: "User does not match." });
     }
 });
 
@@ -114,16 +111,17 @@ app.post("/users/:username", ensureAuthenticated, async (req, res, next) => {
         await User.findByIdAndUpdate(user.id, req.user);
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
-        res.status(404);
-        res.send({ error: "User does not match." });
+        res.status(404).send({ error: "User does not match." });
     }
 });
 
+// --- DELETE USER ---
 app.delete("/delete/:username", async (req, res) => {
    /* Upon user deletion this function as a manual cascade that searches for any comments / portfolios the user
    owns and removes thus as well. */
+   let user = await User.findOne({ username: req.params.username });
+
     try {
-       let user = await User.findOne({ username: req.params.username });
        await User.findByIdAndDelete(user.id, req.user);
        await Portfolio.deleteMany({ authorId: user.id, name: { $gte: req.params.username }}).then(function() {
            console.log("Portfolio deleted.");
@@ -137,27 +135,36 @@ app.delete("/delete/:username", async (req, res) => {
        });
        res.status(200).redirect("/");
    } catch (error) {
-       res.status(404);
-       res.send({ error: "User does not exists." });
+       res.status(404).send({ error: "User does not exists." });
    }
 });
 
-// --- ADD FRIEND --- //
-app.post("/users/:username/add", ensureAuthenticated, function(req, res, next) {
-    User.findByIdAndUpdate(res.locals.currentUser._id, { $push: { "friendsList": { name: req.params.username }}}, function(err, user) {
-        if (err) {
-            next(err);
-            return;
+// --- ADD FRIEND ---
+app.post("/users/:username/add", ensureAuthenticated, async (req, res) => {
+    const friendsList = res.locals.currentUser.friendsList,
+        friendToAdd = req.params.username,
+        friendCheck = (friend) => friend.name === friendToAdd;
+
+    try {
+        if (friendsList.findIndex(friendCheck) > -1) {
+            req.flash("error", "This user is already added as a friend.");
+            return res.status(409).redirect("/users/:username");
+        } else {
+            User.findByIdAndUpdate(res.locals.currentUser._id, { $push: { "friendsList": { name: req.params.username }}});
+            req.flash("info", "Friend added.");
+            return res.status(201).redirect("/users/" + res.locals.currentUser.username);
         }
-        req.flash("info", "Friend added.");
-        res.redirect("/users/" + res.locals.currentUser.username);
-    });
+
+    } catch (error) {
+        res.status(404).send({ error: "Resource not found." });
+    }
 });
+
 
 // --- Portfolios --- //
 
 // --- LIST PORTFOLIOS ---
-app.get("/", function(req, res, next) {
+app.get("/", async (req, res, next) => {
     Portfolio.find()
         .sort({ createdAt: "descending" })
         .exec((err, portfolios) => {
@@ -167,38 +174,44 @@ app.get("/", function(req, res, next) {
 });
 
 // --- CREATE PORTFOLIO ---
-app.get("/add", ensureAuthenticated, function(req, res) {
+app.get("/add", ensureAuthenticated, async (req, res) => {
     res.render("add-portfolio");
 });
 
-app.post("/add", ensureAuthenticated, function(req, res, next) {
+app.post("/add", ensureAuthenticated, async (req, res, next) => {
     // CREATE method that checks if Portfolio already exists, if not than a new one is created
-    const title = req.body.title;
+    const tags = req.body.tags.split(", ");
+    const newPortfolio = new Portfolio({
+        authorId: res.locals.currentUser._id,
+        author: res.locals.currentUser.username,
+        description: req.body.description,
+        headerImage: req.body.headerImage,
+        contextImage: req.body.contextImage,
+        contextImage2: req.body.contextImage2,
+        contextImage3: req.body.contextImage3,
+        tags: [...tags],
+        title: req.body.title,
+    });
 
-    Portfolio.findOne({ title: title }, function(err, portfolio) {
-        if (err) return next(err);
+    try {
+        const portfolio = await Portfolio.findOne({ title: req.body.title });
+
         if (portfolio) {
             req.flash("error", "Portfolio already exists.");
+            res.status(409);
             return res.redirect("/add");
         }
-        const tags = req.body.tags.split(", ");
-        const newPortfolio = new Portfolio({
-            authorId: res.locals.currentUser._id,
-            author: res.locals.currentUser.username,
-            description: req.body.description,
-            headerImage: req.body.headerImage,
-            contextImage: req.body.contextImage,
-            contextImage2: req.body.contextImage2,
-            contextImage3: req.body.contextImage3,
-            tags: [...tags],
-            title: title,
-        });
-        newPortfolio.save(next);
-        res.redirect("/");
-    });
+
+        await newPortfolio.save(next);
+
+        return res.status(201).redirect("/");
+
+    } catch (error) {
+        res.status(404).send({ error: "Resource not found." });
+    }
 });
 
-// --- READ PORTFOLIO --- //
+// --- READ PORTFOLIO ---
 app.get("/portfolios/:portfolio", async (req, res, next) => {
     // Using async call since this function returns more than one promise
     try {
@@ -206,53 +219,52 @@ app.get("/portfolios/:portfolio", async (req, res, next) => {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
         res.status(200).render("view-portfolio", { portfolio: portfolio, comments: comment });
     } catch (error) {
-        res.status(404);
-        res.send({ error: "Post does not match." });
+        res.status(404).send({ error: "Post does not match." });
     }
 });
 
-// --- UPDATE PORTFOLIO --- //
+// --- UPDATE PORTFOLIO ---
 
 
-// --- DELETE PORTFOLIO --- //
+// --- DELETE PORTFOLIO ---
 
 
 // ---Comments--- //
 
-// --- CREATE COMMENT --- //
+// --- CREATE COMMENT ---
 app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     /* CREATE method that captures the entry input and saves it to the Comment model,
      it is associated with its Portfolio by including the Portfolio id
      allowing easy rendering on the HTML/EJS file */
+    const newComment = new Comment({
+       authorId: res.locals.currentUser._id,
+       author: res.locals.currentUser.username,
+       portfolio: req.params.portfolio,
+       comment: req.body.comment
+   });
+
     try {
-        const newComment = new Comment({
-           authorId: res.locals.currentUser._id,
-           author: res.locals.currentUser.username,
-           portfolio: req.params.portfolio,
-           comment: req.body.comment
-       });
        await newComment.save(next);
        res.status(201).redirect("/");
     } catch (error) {
-        res.status(404);
-        res.send({ error: "Post does not match." });
+        res.status(404).send({ error: "Post does not match." });
     }
 });
 
-// --- READ COMMENT --- //
+// --- READ COMMENT ---
 app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
         res.status(200).render("add-comment", { portfolio: portfolio });
     } catch (error) {
-        res.status(404);
-        res.send({ error: "No portfolio exists for this comment." });
+        res.status(404).send({ error: "No portfolio exists for this comment." });
     }
 });
 
-// --- UPDATE COMMENT --- //
+// --- UPDATE COMMENT ---
 
 
-// --- DELETE  COMMENT --- //
+// --- DELETE  COMMENT ---
+
 
 module.exports = app;
