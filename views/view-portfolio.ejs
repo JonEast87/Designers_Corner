@@ -71,13 +71,20 @@
 
     <div class="container-fluid">
         <% comments.forEach(function(entry) { %>
+            <br>
+
             <div class="card">
                 <div class="card-header">From <%= entry.author %></div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p><%= entry.comment %></p>
-                    </blockquote>
-                </div>
+                    <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                            <p><%= entry.comment %></p>
+                            <% if ((currentUser) && (currentUser.id === entry.authorId.toString())) { %>
+                                <form action="/portfolios/<%= portfolio.title %>/comment/<%= entry._id %>?_method=DELETE" method="POST">
+                                    <button class="btn btn-outline-danger">Delete Comment</button>
+                                </form>
+                            <% } %>
+                        </blockquote>
+                    </div>
                 <br>
             </div>
         <% }); %>

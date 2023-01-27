@@ -1,13 +1,15 @@
+// --- imports --- //
 const bcrypt = require("bcrypt-nodejs");
 const express = require("express");
 const passport = require("passport");
 
+// --- file imports --- //
 const app = express.Router();
 const Comment = require("../models/comments");
 const Portfolio = require("../models/portfolio");
 const User = require("../models/user");
 
-// --- Global storage of commonly used requests ---
+// --- Global storage of commonly used requests --- //
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
     res.locals.errors = req.flash("error");
@@ -25,6 +27,9 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
+// --- Users --- //
+
+// --- AUTHENTICATE USER --- //
 app.get("/login", function(req, res) {
     res.render("login");
 });
@@ -39,9 +44,6 @@ app.get("/logout", function(req, res, next) {
     req.session.destroy();
     res.redirect("/");
 });
-
-
-// --- Users --- //
 
 // --- CREATE USER ---
 app.get("/signup", function(req, res) {
@@ -259,7 +261,6 @@ app.get("/portfolios/:portfolio", async (req, res, next) => {
 app.get("/portfolios/:portfolios/edit", ensureAuthenticated, async (req, res) => {
    try {
        let portfolio = await Portfolio.findOne({ title: req.params.portfolios });
-       // console.log(req.params);
        res.status(200).render("edit-portfolio", { portfolio: portfolio });
    } catch(error) {
        res.status(404).send({ error: "Portfolio does not match." });
@@ -321,23 +322,25 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        res.status(200).render("add-comment", { portfolio: portfolio });
+        const comment = await Portfolio.find({ portfolio: req.params.portfolio });
+        res.status(200).render("add-comment", { portfolio: portfolio, comment: comment });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
 });
 
 // --- UPDATE COMMENT ---
-app.get("/portfolios/:portfolio/:comment/edit_comment", ensureAuthenticated, async (req, res) => {
-    console.log(req.params);
-    res.render("edit-comment");
-});
-
-app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, res) => {
-
-});
 
 // --- DELETE  COMMENT ---
-
+app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.comment;
+        await Comment.findByIdAndDelete(id);
+        req.flash("info", "Comment successfully deleted.");
+        res.status(200).redirect("/portfolios/" + req.params.portfolio);
+    } catch (error) {
+        res.status(404).send({ error: "No comment exists." });
+    }
+});
 
 module.exports = app;
