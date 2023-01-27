@@ -5,15 +5,15 @@
     <div class="row">
         <div class="card">
             <div class="col">
-                <form action="/portfolios/<%= portfolio.title %>/add_comment" method="POST">
+                <form action="/portfolios/<%= portfolio.title %>/edit_comment?_method=PATCH" method="POST">
                     <div class="card-body">
-                        <h5 class="card-title">Add your Comment</h5>
+                        <h5 class="card-title">Edit your Comment</h5>
 
                         <br>
 
                         <div class="input-group">
                           <span class="input-group-text">Textarea</span>
-                          <textarea name="comment" class="form-control" aria-label="Textarea"></textarea>
+                          <textarea name="comment" class="form-control" aria-label="Textarea"><%= comment.comment %></textarea>
                         </div>
 
                         <br>

@@ -3,7 +3,7 @@
     <br>
 
     <div class="card">
-        <form action="/users/<%= user.username %>" method="POST">
+        <form action="/users/<%= user.username %>?_method=PATCH" method="POST">
             <div class="card-body">
                 <h5 class="card-title">Edit</h5>
 
@@ -18,13 +18,8 @@
                 </div>
 
                 <div class="form-check">
-                    <label for="password" class="form-label">Password</label>
-                    <input id="password" name="password" type="password" class="form-control" value="<% user.password %>>">
-                </div>
-
-                <div class="form-check">
                     <label for="profileImage" class="form-label">Profile Image</label>
-                    <input id="profileImage" name="profileImage" type="text" class="form-control" value="<% user.profileImage %>">
+                    <input id="profileImage" name="profileImage" type="text" class="form-control" value="<%= user.profileImage %>">
                 </div>
 
                 <br>
@@ -71,6 +66,7 @@
 
                 <div class="form-check">
                     <input type="submit" value="Edit" class="btn btn-primary btn-block">
+                    <a class="btn btn-warning" href="/password/<%= user.username%>/edit_password">Update Password</a>
                     <a class="btn btn-secondary" href="/users/<%= user.username %>">Go Back</a>
                 </div>
             </div>

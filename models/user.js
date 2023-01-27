@@ -7,7 +7,7 @@ const noop = () => {};
 
 const userSchema = new Schema({
     createdAt: { type: Date, default: Date.now() },
-    experience: { type: String, required: true },
+    experience: { type: String, required: false },
     friendsList: [ { name: {type: String, required: false } }],
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },

@@ -1,4 +1,4 @@
-const ejs = require("ejs");
+const bcrypt = require("bcrypt-nodejs");
 const express = require("express");
 const passport = require("passport");
 
@@ -45,7 +45,7 @@ app.get("/logout", function(req, res, next) {
 
 // --- CREATE USER ---
 app.get("/signup", function(req, res) {
-    res.render("signup");
+    res.render("add-user");
 });
 
 app.post("/signup", async (req, res, next) => {
@@ -82,9 +82,9 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
         const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("profile", { user: user, portfolios: portfolios });
+        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
     } catch (error) {
-        res.status(404).send({ error: "User does not match." });
+        res.status(404).send({ error: "User does not exist." });
     }
 });
 
@@ -92,33 +92,64 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
 app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
-        res.status(200).render("edit", { user: user });
+        res.status(200).render("edit-user", { user: user });
     } catch (error) {
-        res.status(404).send({ error: "User does not match." });
+        res.status(404).send({ error: "User does not exist." });
     }
 });
 
-app.post("/users/:username", ensureAuthenticated, async (req, res, next) => {
+app.patch("/users/:username", ensureAuthenticated, async (req, res) => {
     // Simple UPDATE function that captures any changed made in the variable fields and saves it via mongoose .save()
-    req.user.experience = req.body.experience;
-    req.user.password = req.body.password;
-    req.user.profileImage = req.body.profileImage;
-    req.user.phoneNumber = req.body.phoneNumber;
-    req.user.purpose = req.body.purpose;
+    const options = { new: true };
+    const updatedData = req.body;
 
     try {
         let user = await User.findOne({ username: req.params.username });
-        await User.findByIdAndUpdate(user.id, req.user);
+        await User.findByIdAndUpdate(user.id, updatedData, options);
+        req.flash("info", "Your account has been updated.");
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
         res.status(404).send({ error: "User does not match." });
     }
 });
 
+// --- UPDATE USER PASSWORD ---
+app.get("/password/:username/edit_password", ensureAuthenticated, async (req, res) => {
+   try {
+        let user = await User.findOne({ username: req.params.username });
+        res.status(200).render("edit-userpassword", { user: user });
+   } catch (error) {
+       res.status(404).send({ error: "User does not exist." });
+   }
+});
+
+app.patch("/password/:username/", ensureAuthenticated, async (req, res) => {
+    let password = req.body.password;
+    let hashedPassword;
+    let user = await User.findOne({ username: req.params.username });
+    try {
+        await bcrypt.genSalt(10, (error, salt) => {
+            bcrypt.hash(password, salt, null, (error, hash) => {
+                if (error) {
+                    return error;
+                }
+                hashedPassword = hash;
+                user.password = hashedPassword;
+                user.save();
+            });
+        });
+        req.flash("info", "Password has been updated.");
+        res.status(201).redirect("/users/" + req.user.username);
+    } catch (error) {
+        console.log(error);
+       res.status(404).send({ error: "User does not exists." });
+    }
+});
+
 // --- DELETE USER ---
 app.delete("/delete/:username", async (req, res) => {
-   /* Upon user deletion this function as a manual cascade that searches for any comments / portfolios the user
-   owns and removes thus as well. */
+   /* Upon user deletion this function uses a manual cascade that searches for any comments / portfolios the user
+   owns and removes them as well. */
    let user = await User.findOne({ username: req.params.username });
 
     try {
@@ -133,6 +164,7 @@ app.delete("/delete/:username", async (req, res) => {
        }).catch(function(error) {
            console.log(error);
        });
+       req.flash("info", "Your account and all related items have been deleted.");
        res.status(200).redirect("/");
    } catch (error) {
        res.status(404).send({ error: "User does not exists." });
@@ -203,7 +235,7 @@ app.post("/add", ensureAuthenticated, async (req, res, next) => {
         }
 
         await newPortfolio.save(next);
-
+        req.flash("info", "Portfolio added to your account.");
         return res.status(201).redirect("/");
 
     } catch (error) {
@@ -224,9 +256,42 @@ app.get("/portfolios/:portfolio", async (req, res, next) => {
 });
 
 // --- UPDATE PORTFOLIO ---
+app.get("/portfolios/:portfolios/edit", ensureAuthenticated, async (req, res) => {
+   try {
+       let portfolio = await Portfolio.findOne({ title: req.params.portfolios });
+       // console.log(req.params);
+       res.status(200).render("edit-portfolio", { portfolio: portfolio });
+   } catch(error) {
+       res.status(404).send({ error: "Portfolio does not match." });
+   }
+});
 
+app.patch("/portfolios/:portfolio", ensureAuthenticated, async (req, res) => {
+    const options = { new: true };
+    const updatedData = req.body;
+
+    try {
+        let portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        await Portfolio.findByIdAndUpdate(portfolio._id, updatedData, options);
+        req.flash("info", "Portfolio has been updated.");
+        res.status(201).redirect("/portfolios/" + req.body.title);
+    } catch (error) {
+        console.log(error);
+        res.status(404).send({ error: "Portfolio does not match." });
+    }
+});
 
 // --- DELETE PORTFOLIO ---
+app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, async (req, res) => {
+    try {
+        await Portfolio.deleteOne({ title: req.params.portfolio });
+        req.flash("info", "Portfolio has been successfully deleted.");
+        res.status(200).redirect("/");
+    } catch (error) {
+        console.log(error);
+        res.status(404).send({ error: "Portfolio does not exist." });
+    }
+});
 
 
 // ---Comments--- //
@@ -245,6 +310,7 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 
     try {
        await newComment.save(next);
+       req.flash("info", "Comment added.");
        res.status(201).redirect("/");
     } catch (error) {
         res.status(404).send({ error: "Post does not match." });
@@ -262,7 +328,14 @@ app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, r
 });
 
 // --- UPDATE COMMENT ---
+app.get("/portfolios/:portfolio/:comment/edit_comment", ensureAuthenticated, async (req, res) => {
+    console.log(req.params);
+    res.render("edit-comment");
+});
 
+app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, res) => {
+
+});
 
 // --- DELETE  COMMENT ---
 
