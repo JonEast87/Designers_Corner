@@ -82,6 +82,8 @@
                                 <form action="/portfolios/<%= portfolio.title %>/comment/<%= entry._id %>?_method=DELETE" method="POST">
                                     <button class="btn btn-outline-danger">Delete Comment</button>
                                 </form>
+                                <a href="/portfolios/<%= portfolio.title %>/edit_comment/<%= entry._id %>" class="btn btn-outline-info">Edit Comment</a>
+                                <a href="/portfolios/<%= portfolio.title %>/view_comment/<%= entry._id %>" class="btn btn-outline-primary">View Comment</a>
                             <% } %>
                         </blockquote>
                     </div>

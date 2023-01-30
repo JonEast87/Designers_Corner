@@ -27,7 +27,7 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
-// --- Users --- //
+// --- USERS --- //
 
 // --- AUTHENTICATE USER --- //
 app.get("/login", function(req, res) {
@@ -125,21 +125,12 @@ app.get("/password/:username/edit_password", ensureAuthenticated, async (req, re
    }
 });
 
-app.patch("/password/:username/", ensureAuthenticated, async (req, res) => {
+app.patch("/password/:username/edit_password", ensureAuthenticated, async (req, res) => {
     let password = req.body.password;
-    let hashedPassword;
     let user = await User.findOne({ username: req.params.username });
     try {
-        await bcrypt.genSalt(10, (error, salt) => {
-            bcrypt.hash(password, salt, null, (error, hash) => {
-                if (error) {
-                    return error;
-                }
-                hashedPassword = hash;
-                user.password = hashedPassword;
-                user.save();
-            });
-        });
+        user.password = password;
+        user.save();
         req.flash("info", "Password has been updated.");
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
@@ -149,7 +140,7 @@ app.patch("/password/:username/", ensureAuthenticated, async (req, res) => {
 });
 
 // --- DELETE USER ---
-app.delete("/delete/:username", async (req, res) => {
+app.delete("/delete/:username", ensureAuthenticated, async (req, res) => {
    /* Upon user deletion this function uses a manual cascade that searches for any comments / portfolios the user
    owns and removes them as well. */
    let user = await User.findOne({ username: req.params.username });
@@ -175,27 +166,25 @@ app.delete("/delete/:username", async (req, res) => {
 
 // --- ADD FRIEND ---
 app.post("/users/:username/add", ensureAuthenticated, async (req, res) => {
-    const friendsList = res.locals.currentUser.friendsList,
-        friendToAdd = req.params.username,
-        friendCheck = (friend) => friend.name === friendToAdd;
+    const friendToAdd = req.params.username;
 
     try {
-        if (friendsList.findIndex(friendCheck) > -1) {
-            req.flash("error", "This user is already added as a friend.");
-            return res.status(409).redirect("/users/:username");
-        } else {
-            User.findByIdAndUpdate(res.locals.currentUser._id, { $push: { "friendsList": { name: req.params.username }}});
-            req.flash("info", "Friend added.");
-            return res.status(201).redirect("/users/" + res.locals.currentUser.username);
-        }
-
+        User.findByIdAndUpdate(res.locals.currentUser._id,
+            { $push: { "friendsList": { name: friendToAdd }}},
+            { new: true },
+            (error, friend) => {
+                if (error) return error;
+                else return friend;
+        });
+        req.flash("info", "Friend added.");
+        return res.status(201).redirect("/users/" + res.locals.currentUser.username);
     } catch (error) {
         res.status(404).send({ error: "Resource not found." });
     }
 });
 
 
-// --- Portfolios --- //
+// --- PORTFOLIOS --- //
 
 // --- LIST PORTFOLIOS ---
 app.get("/", async (req, res, next) => {
@@ -295,9 +284,19 @@ app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, async (req, res)
 });
 
 
-// ---Comments--- //
+// ---COMMENTS--- //
 
 // --- CREATE COMMENT ---
+app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
+    try {
+        const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        const comment = await Portfolio.find({ portfolio: req.params.portfolio });
+        res.status(200).render("add-comment", { portfolio: portfolio, comment: comment });
+    } catch (error) {
+        res.status(404).send({ error: "No portfolio exists for this comment." });
+    }
+});
+
 app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     /* CREATE method that captures the entry input and saves it to the Comment model,
      it is associated with its Portfolio by including the Portfolio id
@@ -319,17 +318,42 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 });
 
 // --- READ COMMENT ---
-app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
+app.get("/portfolios/:portfolio/view_comment/:comment", ensureAuthenticated, async (req, res) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
         const comment = await Portfolio.find({ portfolio: req.params.portfolio });
-        res.status(200).render("add-comment", { portfolio: portfolio, comment: comment });
+        res.status(200).render("view-comment", { portfolio: portfolio, comment: comment });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
 });
 
 // --- UPDATE COMMENT ---
+app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, async (req, res) => {
+    try {
+        const comment = await Comment.findById(req.params.comment);
+        const portfolio = await Comment.findOne({ title: req.params.portfolio });
+        console.log(req.params);
+        res.status(200).render("edit-comment", { comment: comment, portfolio: portfolio });
+    } catch (error) {
+        console.log(error);
+        res.status(404).send({ error: "This comment does not exist." });
+    }
+});
+
+app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, res) => {
+    const options = { new: true };
+    const updatedData = req.body;
+
+    try {
+
+        await Comment.findByIdAndUpdate(req.params.comment, updatedData, options);
+        req.flash("info", "Comment has been successfully updated.");
+        res.status(201).redirect("/portfolios/" + req.params.portfolio);
+    } catch (error) {
+        res.status(404).send({ error: "No comment exists here." });
+    }
+});
 
 // --- DELETE  COMMENT ---
 app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, async (req, res) => {

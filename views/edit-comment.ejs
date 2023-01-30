@@ -5,7 +5,7 @@
     <div class="row">
         <div class="card">
             <div class="col">
-                <form action="/portfolios/<%= portfolio.title %>/edit_comment?_method=PATCH" method="POST">
+                <form action="/portfolios/<%= portfolio.portfolio %>/<%= comment._id %>?_method=PATCH" method="POST">
                     <div class="card-body">
                         <h5 class="card-title">Edit your Comment</h5>
 
@@ -18,7 +18,7 @@
 
                         <br>
 
-                        <input type="submit" value="Add Comment" class="btn btn-primary btn-block">
+                        <input type="submit" value="Edit Comment" class="btn btn-primary btn-block">
                     </div>
                 </form>
             </div>

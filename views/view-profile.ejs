@@ -38,6 +38,22 @@
             <% } else { %>
                 <ul></ul>
             <% } %>
+            <% if (user.friendsList) { %>
+                <ul>
+                    <% user.friendsList.forEach(function(friend) {%>
+                        <div class="card" style="width: 18rem">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <a href="/users/<%= friend.name %>">View Friend Profile</a>
+                                </p>
+                            </div>
+                        </div>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <ul></ul>
+            <% } %>
+
             <% if ((currentUser) && (currentUser.id === user.id)) { %>
                 <form action="/users/<%= user.name() %>/edit" method="GET">
                     <button class="btn btn-primary">EDIT</button>
