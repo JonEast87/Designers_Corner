@@ -203,16 +203,13 @@ app.get("/add", ensureAuthenticated, async (req, res) => {
 
 app.post("/add", ensureAuthenticated, async (req, res, next) => {
     // CREATE method that checks if Portfolio already exists, if not than a new one is created
-    const tags = req.body.tags.split(", ");
     const newPortfolio = new Portfolio({
         authorId: res.locals.currentUser._id,
         author: res.locals.currentUser.username,
         description: req.body.description,
-        headerImage: req.body.headerImage,
-        contextImage: req.body.contextImage,
-        contextImage2: req.body.contextImage2,
-        contextImage3: req.body.contextImage3,
-        tags: [...tags],
+        imageOfOne: req.body.imageOfOne,
+        imageOfTwo: req.body.imageOfTwo,
+        imageOfThree: req.body.imageOfThree,
         title: req.body.title,
     });
 

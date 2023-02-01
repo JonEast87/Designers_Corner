@@ -27,24 +27,20 @@
 
         <div class="navbar-menu">
             <div class="navbar-end">
-                <div class="navbar-item">
-                    <div class="buttons">
-                        <% if (currentUser) { %>
-                            <a class="navbar-item is-active" href="/add"><i class="fa-regular fa-folder-open"></i></a>
-                            <a class="navbar-item is-active" href="/users/<%= currentUser.username %>"><i class="fa-regular fa-user"></i></a>
-                            <a class="navbar-item is-active" href="#"><i class="fa-regular fa-building"></i></a>
-                            <a class="navbar-item is-active" href="/logout">Sign Out</a>
-                        <% } else { %>
-                                <a class="" href="/login">Sign In</a>
-                        <% } %>
-                    </div>
-              </div>
+                <% if (currentUser) { %>
+                    <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
+                    <a class="navbar-item action-button" href="/users/<%= currentUser.username %>"><i class="fa-regular fa-user"></i></a>
+                    <a class="navbar-item action-button" href="#"><i class="fa-regular fa-building"></i></a>
+                    <a class="navbar-item" href="/logout">Sign Out</a>
+                <% } else { %>
+                    <a class="" href="/login">Sign In</a>
+                <% } %>
             </div>
         </div>
       </div>
     </nav>
 
-    <div class="">
+    <div class="columns">
         <% errors.forEach(function(error) { %>
             <div class="alert alert-danger" role="alert">
                 <%= error %>

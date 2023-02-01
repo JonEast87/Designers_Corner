@@ -1,31 +1,39 @@
 <%- include("partials/_header") %>
-
-    <br>
-
-    <div class="container text-center">
-        <h1>UX Design Portfolio</h1>
-        <div class="row justify-content-md-center">
-            <% portfolios.forEach(function(portfolio) {%>
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header">
-                            <%= portfolio.title %> by <strong><%= portfolio.author %></strong>
-                        </div>
-                        <div class="card-body">
-                            <a href="/portfolios/<%= portfolio.title %>">
-                                <img alt="Header Image" src="<%= portfolio.headerImage %>">
-                            </a>
-                            <p class="card-text">
-                                <%= portfolio.description %>
-                            </p>
-                        </div>
+    <div class="column is-one-third is-offset-one-quarter">
+        <% portfolios.forEach(function(portfolio) {%>
+            <article class="media">
+                <div class="media-content">
+                    <div class="content">
+                        <p><%= portfolio.title %> by <strong><%= portfolio.author %></strong></p>
+                        <br>
+                        <p><%= portfolio.description %></p>
                     </div>
-                    <br>
+                    <nav class="level is-mobile">
+                        <div class="level-left">
+                            <a class="level-item" href="/portfolios/<%= portfolio.title %>">
+                                <span class="icon is-small"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            </a>
+                            <a class="level-item" href="#">
+                                <span class="icon is-small"><i class="fa-regular fa-thumbs-up"></i></span>
+                            </a>
+                            <a class="level-item" href="#">
+                                <span class="icon is-small"><i class="fa-solid fa-reply"></i></span>
+                            </a>
+                        </div>
+                    </nav>
                 </div>
-            <% }) %>
-        </div>
+                <div class="media-right">
+                    <p class="image is-64x64">
+                        <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
+                    </p>
+                    <p class="image is-64x64">
+                        <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                    </p>
+                    <p class="image is-64x64">
+                        <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                    </p>
+                </div>
+            </article>
+        <% }) %>
     </div>
-
-    <br>
-
 <%- include("partials/_footer") %>

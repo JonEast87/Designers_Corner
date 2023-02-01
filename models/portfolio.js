@@ -6,10 +6,9 @@ const portfolioSchema = new Schema({
    authorId: { type: mongoose.Schema.Types.ObjectId, required: true },
    createdAt: { type: Date, default: Date.now() },
    description: { type: String, required: true },
-   headerImage: { type: String, required: true },
-   contextImage: { type: String, required: false},
-   contextImage2: { type: String, required: false },
-   contextImage3: { type: String, required: false},
+   imageOfOne: { type: String, required: true },
+   imageOfTwo: { type: String, required: true},
+   imageOfThree: { type: String, required: true },
    title: { type: String, require: true },
    tags: [{ type: String, required: false }],
    url: { type: String, required: false }
