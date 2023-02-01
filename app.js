@@ -27,6 +27,7 @@ app.set("view engine", "ejs");
 // Standard Express setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+app.use(express.static('public/css'));
 app.use(cookieParser());
 app.use(session({
     store: MongoStore.create({ mongoUrl: process.env.MONGO_URI }),

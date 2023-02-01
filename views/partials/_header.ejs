@@ -1,54 +1,58 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
         <title>Designer's Corner</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-<!--        <link href="stylesheet.css" type="text/css" rel="stylesheet">-->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono&family=Roboto+Slab:wght@300&family=Roboto:wght@500&display=swap" rel="stylesheet">
+        <link href="../../css/stylesheet.css" type="text/css" rel="stylesheet">
+        <script src="https://kit.fontawesome.com/2453f003ac.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel="stylesheet" href="https://kit.fontawesome.com/2453f003ac.css" crossorigin="anonymous">
     </head>
-
     <body>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">Designer's Corner</a>
-                <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+    <nav class="navbar is-link" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">
+                Designer's Corner
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
                         <% if (currentUser) { %>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/users/<%= currentUser.username %>">View Profile</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/add">Add Portfolio</a>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="/logout">Logout</a>
-                            </li>
+                            <a class="navbar-item is-active" href="/add"><i class="fa-regular fa-folder-open"></i></a>
+                            <a class="navbar-item is-active" href="/users/<%= currentUser.username %>"><i class="fa-regular fa-user"></i></a>
+                            <a class="navbar-item is-active" href="#"><i class="fa-regular fa-building"></i></a>
+                            <a class="navbar-item is-active" href="/logout">Sign Out</a>
                         <% } else { %>
-                            <li class="nav-item">
-                                <a class="nav-link active" href="/login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/signup">Signup</a>
-                            </li>
+                                <a class="" href="/login">Sign In</a>
                         <% } %>
-                    </ul>
-                </div>
+                    </div>
+              </div>
             </div>
-        </nav>
+        </div>
+      </div>
+    </nav>
 
-        <div class="container">
-            <% errors.forEach(function(error) { %>
-                <div class="alert alert-danger" role="alert">
-                    <%= error %>
-                </div>
-            <% }); %>
+    <div class="">
+        <% errors.forEach(function(error) { %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% }); %>
 
-            <% infos.forEach(function(info) { %>
-                <div class="alert alert-info" role="alert">
-                    <%= info %>
-                </div>
-            <% }); %>
+        <% infos.forEach(function(info) { %>
+            <div class="alert alert-info" role="alert">
+                <%= info %>
+            </div>
+        <% }); %>

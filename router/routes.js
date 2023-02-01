@@ -40,7 +40,7 @@ app.post("/login", passport.authenticate("login", {
     failureFlash: true
 }));
 
-app.get("/logout", function(req, res, next) {
+app.get("/logout", ensureAuthenticated, function(req, res, next) {
     req.session.destroy();
     res.redirect("/");
 });
@@ -187,7 +187,7 @@ app.post("/users/:username/add", ensureAuthenticated, async (req, res) => {
 // --- PORTFOLIOS --- //
 
 // --- LIST PORTFOLIOS ---
-app.get("/", async (req, res, next) => {
+app.get("/", ensureAuthenticated, async(req, res, next) => {
     Portfolio.find()
         .sort({ createdAt: "descending" })
         .exec((err, portfolios) => {
@@ -235,7 +235,7 @@ app.post("/add", ensureAuthenticated, async (req, res, next) => {
 });
 
 // --- READ PORTFOLIO ---
-app.get("/portfolios/:portfolio", async (req, res, next) => {
+app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) => {
     // Using async call since this function returns more than one promise
     try {
         const comment = await Comment.find({ portfolio: req.params.portfolio });

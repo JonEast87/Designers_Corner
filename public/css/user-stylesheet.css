@@ -1,0 +1,13 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    margin: auto;
+}
+
+.button {
+    background-color: #3A00E5;
+}

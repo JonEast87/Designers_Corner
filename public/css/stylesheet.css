@@ -1,27 +1,20 @@
-nav {
-    background-color: #F7F5FF;
+/* CSS Variables */
+:root {
+    --black: #19191B;
+    --subtitle1: #61646B;
+    --subtitle2: #AFB1B6;
+    --background: #EFEFF0;
+    --surface: #FAFAFA;
+    --primary-purple: #3A00E5;
+    --primary-subtle: #F7F5FF;
+    --primary-black: #000000;
+    --primary-subtle-white: #FFFFFF;
 }
 
-h1, h2, .card-header {
-    font-family: Roboto, sans-serif;
-}
+/* Vanilla Selectors */
 
-p,.card-body {
-    font-family: "Roboto Slab", serif;
-}
+/* Class Selectors */
 
-.card-footer {
-    font-family: "Roboto Mono", monospace;
-}
+/* ID Selectors */
 
-.card {
-    background-color: #F7F5FF;
-}
-
-.btn-bd-primary {
-    --bs-btn-color: #3A00E5;
-}
-
-.info {
-    background-color: #F7F5FF;
-}
+/* Media Queries */

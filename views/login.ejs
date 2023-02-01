@@ -1,23 +1,76 @@
-<%- include("partials/_header") %>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <title>Designer's Corner</title>
+        <script src="https://kit.fontawesome.com/2453f003ac.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel="stylesheet" href="https://kit.fontawesome.com/2453f003ac.css" crossorigin="anonymous">
+        <style>
+            body {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                min-height: 100vh;
+            }
 
-    <br>
+            .button {
+                background-color: #3A00E5;
+            }
 
-    <div class="container-fluid center-screen">
-        <div class="card">
+            .card {
+                background-color: #F7F5FF;
+            }
+
+            .card-footer ol li {
+                display: inline;
+            }
+
+            .border {
+                border: 3px solid #3A00E5;
+                border-radius:5px;
+                padding: 2px;
+            }
+        </style>
+    </head>
+
+    <body>
+        <main>
             <form action="/login" method="POST">
-                <div class="card-body">
-                    <h5 class="card-title">Login</h5>
+                <div class="container is-max-desktop">
 
-                    <label for="username" class="form-label">Username</label>
-                    <input id="username" name="username" type="text" class="form-control" placeholder="Username" required autofocus>
+                    <div class="field">
+                      <p class="control has-icons-left has-icons-right">
+                        <input class="input" id="username" name="username" type="text" placeholder="Username" required autofocus>
+                        <span class="icon is-small is-left">
+                          <i class="fa-regular fa-user"></i>
+                        </span>
+                      </p>
+                    </div>
 
-                    <label for="password" class="form-label">Password</label>
-                    <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
-                    <br>
-                    <input type="submit" value="Login" class="btn btn-primary">
+                    <div class="field">
+                      <p class="control has-icons-left">
+                        <input class="input" id="password" name="password" type="password" placeholder="Password" required>
+                        <span class="icon is-small is-left">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                      </p>
+                    </div>
+
+                    <div class="field">
+                      <p class="control">
+                        <button class="input has-text-white has-background-link">
+                          Sign In
+                        </button>
+                      </p>
+                    </div>
+                    <div class="field">
+                        <p class="control">Don't have an account? <a href="/signup">Create one!</a></p>
+                    </div>
                 </div>
             </form>
-        </div>
-    </div>
-
-<%- include("partials/_footer") %>
+        </main>
+    </body>
+</html>
