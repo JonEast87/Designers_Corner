@@ -2,17 +2,42 @@
 
     <br>
 
-    <div class="container-fluid">
+    <div class="column is-4 is-offset-4">
         <div class="card">
-          <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
-          <div class="card-body">
-            <h3><%= user.name() %></h3>
-            <p>Joined on <%= user.createdAt %></p>
+            <div class="card-image">
+                <figure class="image is-4by3">
+                    <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
+                </figure>
+            </div>
+          <div class="card-content">
+              <div class="media">
+                  <div class="media-left">
+                      <figure class="image is-48x48">
+                            <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
+                      </figure>
+                  </div>
+              </div>
+              <div class="media-content">
+                <h3 class="subtitle"><%= user.name() %></h3>
+                <p>Joined on <%= user.createdAt %></p>
+              </div>
           </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item"><%= user.purpose %></li>
-            <li class="list-group-item"><%= user.experience%></li>
-          </ul>
+          <div class="tabs is-centered">
+              <ul>
+                <li class="is-active">
+                    <a>
+                        <span class="icon is-small"><i class="fa-regular fa-clipboard"></i></span>
+                        <span><%= user.purpose %></span>
+                    </a>
+                </li>
+                <li>
+                    <a>
+                        <span class="icon is-small"><i class="fa-solid fa-bolt"></i></span>
+                        <span><%= user.experience%></span>
+                    </a>
+                </li>
+              </ul>
+          </div>
           <div class="card-body">
             <% if ((currentUser) && currentUser.id !== user.id) {%>
               <form action="/users/<%= user.name() %>/add" method="POST">
@@ -20,28 +45,10 @@
               </form>
             <% }%>
           </div>
-            <% if (portfolios) { %>
-                <ul>
-                    <% portfolios.forEach(function(portfolio) {%>
-                        <div class="card" style="width: 18rem">
-                            <a href="/<%= portfolio.title %>">
-                                <img alt="Header Image" src="<%= portfolio.headerImage %>" style="width: 18rem">
-                            </a>
-                            <div class="card-body">
-                                <p class="card-text">
-                                    <%= portfolio.description %>
-                                </p>
-                            </div>
-                        </div>
-                    <% }) %>
-                </ul>
-            <% } else { %>
-                <ul></ul>
-            <% } %>
             <% if (user.friendsList) { %>
                 <ul>
                     <% user.friendsList.forEach(function(friend) {%>
-                        <div class="card" style="width: 18rem">
+                        <div class="card">
                             <div class="card-body">
                                 <p class="card-text">
                                     <a href="/users/<%= friend.name %>">View Friend Profile</a>
@@ -55,14 +62,58 @@
             <% } %>
 
             <% if ((currentUser) && (currentUser.id === user.id)) { %>
-                <form action="/users/<%= user.name() %>/edit" method="GET">
-                    <button class="btn btn-primary">EDIT</button>
-                </form>
-                <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
-                    <button class="btn btn-danger">DELETE</button>
-                </form>
+                <div class="buttons is-grouped is-centered">
+                    <form action="/users/<%= user.name() %>/edit" method="GET">
+                        <button class="button is-success">Edit Account</button>
+                    </form>
+                    <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
+                        <button class="button is-danger ml-3">Delete Account</button>
+                    </form>
+                </div>
             <% }%>
         </div>
+        <% if (portfolios) { %>
+            <ul class="mt-6">
+                <% portfolios.forEach(function(portfolio) {%>
+                    <article class="card">
+                        <header class="card-header mb-3">
+                            <p class="card-header-title">
+                                Component
+                            </p>
+                            <button class="card-header-icon" aria-label="more options">
+                                <span class="icon">
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </header>
+                        <div class="media p-2">
+                            <div class="media-content mt-3">
+                                <div class="content">
+                                    <p><%= portfolio.description %></p>
+                                </div>
+                            </div>
+                            <div class="media-right">
+                                <p class="image is-64x64">
+                                    <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
+                                </p>
+                                <p class="image is-64x64">
+                                    <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                                </p>
+                                <p class="image is-64x64">
+                                    <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                                </p>
+                            </div>
+                        </div>
+                    </article>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <ul></ul>
+        <% } %>
+    </div>
+
+    <div class="column is-4 is-offset-2">
+
     </div>
 
     <br>
