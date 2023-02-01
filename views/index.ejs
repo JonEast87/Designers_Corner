@@ -1,37 +1,34 @@
 <%- include("partials/_header") %>
     <div class="column is-one-third is-offset-one-quarter">
         <% portfolios.forEach(function(portfolio) {%>
-            <article class="media">
-                <div class="media-content">
-                    <div class="content">
-                        <p><%= portfolio.title %> by <strong><%= portfolio.author %></strong></p>
-                        <br>
-                        <p><%= portfolio.description %></p>
-                    </div>
-                    <nav class="level is-mobile">
-                        <div class="level-left">
-                            <a class="level-item" href="/portfolios/<%= portfolio.title %>">
-                                <span class="icon is-small"><i class="fa-solid fa-magnifying-glass"></i></span>
-                            </a>
-                            <a class="level-item" href="#">
-                                <span class="icon is-small"><i class="fa-regular fa-thumbs-up"></i></span>
-                            </a>
-                            <a class="level-item" href="#">
-                                <span class="icon is-small"><i class="fa-solid fa-reply"></i></span>
-                            </a>
+            <article class="card">
+                <header class="card-header mb-3">
+                    <p class="card-header-title">
+                        Component
+                    </p>
+                    <button class="card-header-icon" aria-label="more options">
+                        <span class="icon">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </header>
+                <div class="media p-2">
+                    <div class="media-content mt-3">
+                        <div class="content">
+                            <p><%= portfolio.description %></p>
                         </div>
-                    </nav>
-                </div>
-                <div class="media-right">
-                    <p class="image is-64x64">
-                        <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
-                    </p>
-                    <p class="image is-64x64">
-                        <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
-                    </p>
-                    <p class="image is-64x64">
-                        <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
-                    </p>
+                    </div>
+                    <div class="media-right">
+                        <p class="image is-64x64">
+                            <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
+                        </p>
+                        <p class="image is-64x64">
+                            <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                        </p>
+                        <p class="image is-64x64">
+                            <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                        </p>
+                    </div>
                 </div>
             </article>
         <% }) %>

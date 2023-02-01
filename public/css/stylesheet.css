@@ -9,16 +9,31 @@
     --primary-subtle: #F7F5FF;
     --primary-black: #000000;
     --primary-subtle-white: #FFFFFF;
+    --custom-border: 1px solid var(--primary-purple);
+    --custom-border-radius-img: 5%;
+    --custom-border-radius-p: 2%;
 }
 
 /* Vanilla Selectors */
 nav .action-button {
-    border: 1px solid black;
-    border-radius: 50%;
-    margin-right: 10px;
+    /*border: 1px solid black;*/
+    /*border-radius: 5%;*/
+    margin-right: 15px;
 }
 
 /* Class Selectors */
+.media-right img {
+    border: var(--custom-border);
+    border-radius: var(--custom-border-radius-img);
+    margin-top: 10px;
+}
+
+.content p {
+    border: var(--custom-border);
+    border-radius: var(--custom-border-radius-p);
+    height: 200px;
+    padding: 10px;
+}
 
 /* ID Selectors */
 
