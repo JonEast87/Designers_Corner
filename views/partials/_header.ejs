@@ -7,6 +7,7 @@
         <title>Designer's Corner</title>
         <link href="../../css/stylesheet.css" type="text/css" rel="stylesheet">
         <script src="https://kit.fontawesome.com/2453f003ac.js" crossorigin="anonymous"></script>
+        <script src="../../javascript/interactive.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
         <link rel="stylesheet" href="https://kit.fontawesome.com/2453f003ac.css" crossorigin="anonymous">
     </head>
@@ -42,13 +43,15 @@
 
     <div>
         <% errors.forEach(function(error) { %>
-            <div class="alert alert-danger" role="alert">
+            <div class="notification is-danger is-light">
+                <button class="delete"></button>
                 <%= error %>
             </div>
         <% }); %>
 
         <% infos.forEach(function(info) { %>
-            <div class="alert alert-info" role="alert">
+            <div class="notification is-info is-light" role="alert">
+                <button class="delete"></button>
                 <%= info %>
             </div>
         <% }); %>

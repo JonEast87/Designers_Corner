@@ -35,7 +35,10 @@ app.get("/login", function(req, res) {
     res.render("login");
 });
 
-app.post("/login", passport.authenticate("login", {
+app.post("/login", async (req, res, next) => {
+    req.flash("info", "You have been successfully signed in.");
+    next();
+}, passport.authenticate("login", {
     successRedirect: "/",
     failureRedirect: "/login",
     failureFlash: true
@@ -69,6 +72,7 @@ app.post("/signup", async (req, res, next) => {
             res.status(409);
             return res.redirect("/signup");
         }
+        req.flash("info", "You have successfully created an account.");
         await newUser.save(next);
     } catch (error) {
         res.status(404).send({ error: "Resource not found." });
@@ -78,18 +82,6 @@ app.post("/signup", async (req, res, next) => {
     failureRedirect: "/signup",
     failureFlash: true
 }));
-
-// --- READ USER ---
-app.get("/users/:username", ensureAuthenticated, async (req, res) => {
-    // Using async call since this function returns more than one promise
-    try {
-        let user = await User.findOne({ username: req.params.username });
-        const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
-    } catch (error) {
-        res.status(404).send({ error: "User does not exist." });
-    }
-});
 
 // --- UPDATE USER ---
 app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
@@ -148,13 +140,21 @@ app.delete("/delete/:username", ensureAuthenticated, async (req, res) => {
 
     try {
        await User.findByIdAndDelete(user.id, req.user);
-       await Portfolio.deleteMany({ authorId: user.id, name: { $gte: req.params.username }}).then(function() {
-           console.log("Portfolio deleted.");
+       await Profile.deleteOne({ profileAuthor: user.id })
+           .then(function() {
+               console.log("Profile deleted.");
+           }).catch(function(error) {
+               console.log(error);
+           });
+       await Portfolio.deleteMany({ authorId: user.id, name: { $gte: req.params.username }})
+           .then(function() {
+                console.log("Portfolio deleted.");
        }).catch(function(error) {
            console.log(error);
        });
-       await Comment.deleteMany({ authorId: user.id, name: { $gte: req.params.username }}).then(function() {
-           console.log("Comments deleted.");
+       await Comment.deleteMany({ authorId: user.id, name: { $gte: req.params.username }})
+           .then(function() {
+                console.log("Comments deleted.");
        }).catch(function(error) {
            console.log(error);
        });
@@ -165,13 +165,25 @@ app.delete("/delete/:username", ensureAuthenticated, async (req, res) => {
    }
 });
 
+// --- READ PROFILE ---
+app.get("/users/:username", ensureAuthenticated, async (req, res) => {
+    // Using async call since this function returns more than one promise
+    try {
+        let user = await User.findOne({ username: req.params.username });
+        const portfolios = await Portfolio.find({ authorId: user.id});
+        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
+    } catch (error) {
+        res.status(404).send({ error: "User does not exist." });
+    }
+});
+
 // --- ADD USER PROFILE ---
-app.get("/users/:username/add_profile", ensureAuthenticated, async (req, res) => {
+app.get("/profiles/add_profile/:username", ensureAuthenticated, async (req, res) => {
     const user = await User.findOne({ username: req.params.username });
     res.render("add-profile", { user: user });
 });
 
-app.post("/users/:username/add_profile", ensureAuthenticated, async (req, res, next) => {
+app.post("/profiles/add_profile/:username", ensureAuthenticated, async (req, res, next) => {
     const newProfile = new Profile({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
@@ -196,6 +208,30 @@ app.post("/users/:username/add_profile", ensureAuthenticated, async (req, res, n
         }
     } catch (error) {
         res.status(404).send({ error: "Resource not found." });
+    }
+});
+
+// -- EDIT PROFILE ---
+app.get("/profiles/edit_profile/:username", ensureAuthenticated, async (req, res) => {
+   const user = User.findOne({ username: req.params.username });
+   console.log(req.params);
+   res.status(200).render("edit-profile", { user: user });
+});
+
+app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
+    const options = { new: true };
+    const updatedData = req.body;
+
+    try {
+        console.log(req.body);
+        let user = await User.findOne({ username: req.params.username });
+        let profile = await Profile.findOne({ profileAuthor: res.locals.currentUser._id });
+        await Profile.findByIdAndUpdate(profile.id, updatedData, options);
+        req.flash("info", "Profile has been successfully updated.");
+        res.status(201).redirect("/users/" + res.locals.currentUser.username);
+    } catch (error) {
+        console.log(error);
+        res.status(404).send({ error: "Profile does not match." });
     }
 });
 

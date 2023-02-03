@@ -109,10 +109,11 @@
 
                 <% if ((currentUser) && (currentUser.id === user.id)) { %>
                 <div class="buttons is-grouped is-centered">
-                    <form action="/users/<%= user.name() %>/add_profile" method="GET">
-                        <button class="button is-primary">Create Profile</button>
-                    </form>
-
+                    <% if (user.profileExists === false) { %>
+                    <a class="button is-primary" href="/profiles/add_profile/<%= user.username %>">Create Profile</a>
+                    <% } else { %>
+                    <a class="button is-primary" href="/profiles/edit_profile/<%= user.username %>">Edit Profile</a>
+                    <% } %>
                     <form action="/users/<%= user.name() %>/edit" method="GET">
                         <button class="button is-success">Edit Account</button>
                     </form>
