@@ -46,17 +46,17 @@
         </div>
         <div class="column is-4">
             <div class="card">
-                <% if (user.profile) { %>
+                <% if (user.profileExists === true) { %>
                 <div class="card-image">
                     <figure class="image is-4by3">
-                        <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
+                        <img src="<%= profile.profileImage %>" class="card-img-top" alt="Profile Image">
                     </figure>
                 </div>
                 <div class="card-content">
                   <div class="media">
                       <div class="media-left">
                           <figure class="image is-48x48">
-                                <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
+                                <img src="<%= profile.profileImage %>" class="card-img-top" alt="Profile Image">
                           </figure>
                       </div>
                   </div>
@@ -66,24 +66,16 @@
                     <p>Joined on <%= user.createdAt %></p>
                   </div>
                 </div>
-                <% if (user.profile) { %>
                 <div class="tabs is-centered">
                   <ul>
                     <li class="is-active">
                         <a>
                             <span class="icon is-small"><i class="fa-regular fa-clipboard"></i></span>
-                            <span><%= user.purpose %></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a>
-                            <span class="icon is-small"><i class="fa-solid fa-bolt"></i></span>
-                            <span><%= user.experience%></span>
+                            <span><%= profile.purpose %></span>
                         </a>
                     </li>
                   </ul>
                 </div>
-                <% } %>
               <div class="card-body">
                 <% if ((currentUser) && currentUser.id !== user.id) {%>
                 <form action="/users/<%= user.name() %>/add" method="POST">

@@ -28,6 +28,18 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
+function checkOwnership(req, res, next) {
+    const username = req.params.username;
+    const currentUser = res.locals.currentUser.username;
+
+    if (username === currentUser) {
+        next();
+    } else {
+        req.flash("error", "You are not allowed access.");
+        res.status(403).redirect("/");
+    }
+}
+
 // --- USERS --- //
 
 // --- AUTHENTICATE USER --- //
@@ -46,7 +58,7 @@ app.post("/login", async (req, res, next) => {
 
 app.get("/logout", ensureAuthenticated, function(req, res, next) {
     req.session.destroy();
-    res.redirect("/");
+    res.redirect("/login");
 });
 
 // --- CREATE USER ---
@@ -84,7 +96,7 @@ app.post("/signup", async (req, res, next) => {
 }));
 
 // --- UPDATE USER ---
-app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
+app.get("/users/:username/edit", ensureAuthenticated, checkOwnership, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-user", { user: user });
@@ -93,7 +105,7 @@ app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
     }
 });
 
-app.patch("/users/:username", ensureAuthenticated, async (req, res) => {
+app.patch("/users/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
     // Simple UPDATE function that captures any changed made in the variable fields and saves it via mongoose .save()
     const options = { new: true };
     const updatedData = req.body;
@@ -109,7 +121,7 @@ app.patch("/users/:username", ensureAuthenticated, async (req, res) => {
 });
 
 // --- UPDATE USER PASSWORD ---
-app.get("/password/:username/edit_password", ensureAuthenticated, async (req, res) => {
+app.get("/password/:username/edit_password", ensureAuthenticated, checkOwnership, async (req, res) => {
    try {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-userpassword", { user: user });
@@ -118,7 +130,7 @@ app.get("/password/:username/edit_password", ensureAuthenticated, async (req, re
    }
 });
 
-app.patch("/password/:username/edit_password", ensureAuthenticated, async (req, res) => {
+app.patch("/password/:username/edit_password", ensureAuthenticated, checkOwnership, async (req, res) => {
     let password = req.body.password;
     let user = await User.findOne({ username: req.params.username });
     try {
@@ -133,7 +145,7 @@ app.patch("/password/:username/edit_password", ensureAuthenticated, async (req, 
 });
 
 // --- DELETE USER ---
-app.delete("/delete/:username", ensureAuthenticated, async (req, res) => {
+app.delete("/delete/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
    /* Upon user deletion this function uses a manual cascade that searches for any comments / portfolios the user
    owns and removes them as well. */
    let user = await User.findOne({ username: req.params.username });
@@ -170,20 +182,21 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     // Using async call since this function returns more than one promise
     try {
         let user = await User.findOne({ username: req.params.username });
+        let profile = await Profile.findOne({ profileAuthor: user.id });
         const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
+        res.status(200).render("view-profile", { user: user, portfolios: portfolios, profile: profile });
     } catch (error) {
         res.status(404).send({ error: "User does not exist." });
     }
 });
 
 // --- ADD USER PROFILE ---
-app.get("/profiles/add_profile/:username", ensureAuthenticated, async (req, res) => {
+app.get("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
     const user = await User.findOne({ username: req.params.username });
     res.render("add-profile", { user: user });
 });
 
-app.post("/profiles/add_profile/:username", ensureAuthenticated, async (req, res, next) => {
+app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, async (req, res, next) => {
     const newProfile = new Profile({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
@@ -212,13 +225,13 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, async (req, res
 });
 
 // -- EDIT PROFILE ---
-app.get("/profiles/edit_profile/:username", ensureAuthenticated, async (req, res) => {
+app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
    const user = User.findOne({ username: req.params.username });
    console.log(req.params);
    res.status(200).render("edit-profile", { user: user });
 });
 
-app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
+app.patch("/profiles/edit_profile", ensureAuthenticated, checkOwnership, async (req, res) => {
     const options = { new: true };
     const updatedData = req.body;
 
@@ -236,7 +249,7 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 });
 
 // --- ADD FRIEND ---
-app.post("/users/:username/add", ensureAuthenticated, async (req, res) => {
+app.post("/users/:username/add", ensureAuthenticated, checkOwnership, async (req, res) => {
     const friendToAdd = req.params.username;
 
     try {
@@ -315,7 +328,7 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
 });
 
 // --- UPDATE PORTFOLIO ---
-app.get("/portfolios/:portfolios/edit", ensureAuthenticated, async (req, res) => {
+app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkOwnership, async (req, res) => {
    try {
        let portfolio = await Portfolio.findOne({ title: req.params.portfolios });
        res.status(200).render("edit-portfolio", { portfolio: portfolio });
@@ -324,7 +337,7 @@ app.get("/portfolios/:portfolios/edit", ensureAuthenticated, async (req, res) =>
    }
 });
 
-app.patch("/portfolios/:portfolio", ensureAuthenticated, async (req, res) => {
+app.patch("/portfolios/:portfolio", ensureAuthenticated, checkOwnership, async (req, res) => {
     const options = { new: true };
     const updatedData = req.body;
 
@@ -340,7 +353,7 @@ app.patch("/portfolios/:portfolio", ensureAuthenticated, async (req, res) => {
 });
 
 // --- DELETE PORTFOLIO ---
-app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, async (req, res) => {
+app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, checkOwnership, async (req, res) => {
     try {
         await Portfolio.deleteOne({ title: req.params.portfolio });
         req.flash("info", "Portfolio has been successfully deleted.");
@@ -397,7 +410,7 @@ app.get("/portfolios/:portfolio/view_comment/:comment", ensureAuthenticated, asy
 });
 
 // --- UPDATE COMMENT ---
-app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, async (req, res) => {
+app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.comment);
         const portfolio = await Comment.findOne({ title: req.params.portfolio });
@@ -409,7 +422,7 @@ app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, asy
     }
 });
 
-app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, res) => {
+app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
     const options = { new: true };
     const updatedData = req.body;
 
@@ -424,7 +437,7 @@ app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, re
 });
 
 // --- DELETE  COMMENT ---
-app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, async (req, res) => {
+app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
     try {
         const id = req.params.comment;
         await Comment.findByIdAndDelete(id);
