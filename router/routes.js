@@ -6,6 +6,7 @@ const passport = require("passport");
 // --- file imports --- //
 const app = express.Router();
 const Comment = require("../models/comments");
+const Profile = require("../models/profile");
 const Portfolio = require("../models/portfolio");
 const User = require("../models/user");
 
@@ -96,7 +97,7 @@ app.get("/users/:username/edit", ensureAuthenticated, async (req, res) => {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-user", { user: user });
     } catch (error) {
-        res.status(404).send({ error: "User does not exist." });
+        res.status(404).send({ error: "Edit does not exist." });
     }
 });
 
@@ -111,7 +112,7 @@ app.patch("/users/:username", ensureAuthenticated, async (req, res) => {
         req.flash("info", "Your account has been updated.");
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
-        res.status(404).send({ error: "User does not match." });
+        res.status(404).send({ error: "Update does not match." });
     }
 });
 
@@ -121,7 +122,7 @@ app.get("/password/:username/edit_password", ensureAuthenticated, async (req, re
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-userpassword", { user: user });
    } catch (error) {
-       res.status(404).send({ error: "User does not exist." });
+       res.status(404).send({ error: "Password does not exist." });
    }
 });
 
@@ -135,7 +136,7 @@ app.patch("/password/:username/edit_password", ensureAuthenticated, async (req, 
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
         console.log(error);
-       res.status(404).send({ error: "User does not exists." });
+       res.status(404).send({ error: "Update password does not exists." });
     }
 });
 
@@ -160,8 +161,42 @@ app.delete("/delete/:username", ensureAuthenticated, async (req, res) => {
        req.flash("info", "Your account and all related items have been deleted.");
        res.status(200).redirect("/");
    } catch (error) {
-       res.status(404).send({ error: "User does not exists." });
+       res.status(404).send({ error: "Delete does not exists." });
    }
+});
+
+// --- ADD USER PROFILE ---
+app.get("/users/:username/add_profile", ensureAuthenticated, async (req, res) => {
+    const user = await User.findOne({ username: req.params.username });
+    res.render("add-profile", { user: user });
+});
+
+app.post("/users/:username/add_profile", ensureAuthenticated, async (req, res, next) => {
+    const newProfile = new Profile({
+        profileAuthor: res.locals.currentUser._id,
+        bio: req.body.bio,
+        profileImage: req.body.profileImage,
+        purpose: req.body.purpose,
+        skills: req.body.skills
+    });
+
+    try {
+        const user = await User.findOne({ username: req.params.username });
+
+        if (user.profileExists === false) {
+            await newProfile.save(next);
+            user.profileExists = true;
+            user.save(next);
+            req.flash("info", "Profile created for your account.");
+            return res.status(201).redirect("/users/" + req.params.username);
+        } else {
+            req.flash("error", "Profile already exists.");
+            res.status(409);
+            return res.redirect("/users/" + req.params.username);
+        }
+    } catch (error) {
+        res.status(404).send({ error: "Resource not found." });
+    }
 });
 
 // --- ADD FRIEND ---

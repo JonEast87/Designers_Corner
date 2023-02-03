@@ -46,12 +46,13 @@
         </div>
         <div class="column is-4">
             <div class="card">
+                <% if (user.profile) { %>
                 <div class="card-image">
                     <figure class="image is-4by3">
                         <img src="<%= user.profileImage %>" class="card-img-top" alt="Profile Image">
                     </figure>
                 </div>
-              <div class="card-content">
+                <div class="card-content">
                   <div class="media">
                       <div class="media-left">
                           <figure class="image is-48x48">
@@ -59,12 +60,14 @@
                           </figure>
                       </div>
                   </div>
+                  <% } %>
                   <div class="media-content">
                     <h3 class="subtitle"><%= user.name() %></h3>
                     <p>Joined on <%= user.createdAt %></p>
                   </div>
-              </div>
-              <div class="tabs is-centered">
+                </div>
+                <% if (user.profile) { %>
+                <div class="tabs is-centered">
                   <ul>
                     <li class="is-active">
                         <a>
@@ -79,39 +82,45 @@
                         </a>
                     </li>
                   </ul>
-              </div>
+                </div>
+                <% } %>
               <div class="card-body">
                 <% if ((currentUser) && currentUser.id !== user.id) {%>
-                  <form action="/users/<%= user.name() %>/add" method="POST">
+                <form action="/users/<%= user.name() %>/add" method="POST">
                     <button class="btn btn-primary">Add as a Friend</button>
-                  </form>
+                </form>
                 <% }%>
               </div>
                 <% if (user.friendsList) { %>
-                    <ul>
-                        <% user.friendsList.forEach(function(friend) {%>
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="card-text">
-                                        <a href="/users/<%= friend.name %>">View Friend Profile</a>
-                                    </p>
-                                </div>
+                <ul>
+                    <% user.friendsList.forEach(function(friend) {%>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <a href="/users/<%= friend.name %>">View Friend Profile</a>
+                                </p>
                             </div>
-                        <% }) %>
-                    </ul>
+                        </div>
+                    <% }) %>
+                </ul>
                 <% } else { %>
-                    <ul></ul>
+                <ul></ul>
                 <% } %>
 
                 <% if ((currentUser) && (currentUser.id === user.id)) { %>
-                    <div class="buttons is-grouped is-centered">
-                        <form action="/users/<%= user.name() %>/edit" method="GET">
-                            <button class="button is-success">Edit Account</button>
-                        </form>
-                        <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
-                            <button class="button is-danger ml-3">Delete Account</button>
-                        </form>
-                    </div>
+                <div class="buttons is-grouped is-centered">
+                    <form action="/users/<%= user.name() %>/add_profile" method="GET">
+                        <button class="button is-primary">Create Profile</button>
+                    </form>
+
+                    <form action="/users/<%= user.name() %>/edit" method="GET">
+                        <button class="button is-success">Edit Account</button>
+                    </form>
+
+                    <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
+                        <button class="button is-danger ml-3">Delete Account</button>
+                    </form>
+                </div>
                 <% }%>
             </div>
         </div>

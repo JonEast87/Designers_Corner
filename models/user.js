@@ -7,13 +7,12 @@ const noop = () => {};
 
 const userSchema = new Schema({
     createdAt: { type: Date, default: Date.now() },
-    experience: { type: String, required: false },
     friendsList: [ { name: { type: String, required: false } }],
-    username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phoneNumber: { type: Number, required: true },
-    profileImage: { type: String, required: false },
-    purpose: { type: String }
+    profile: { type: mongoose.Schema.Types.ObjectId, required: false },
+    profileExists: { type: Boolean, required: true, default: false },
+    username: { type: String, required: true, unique: true }
 });
 
 userSchema.methods.name = function() {

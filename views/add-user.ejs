@@ -9,6 +9,21 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
         <link rel="stylesheet" href="https://kit.fontawesome.com/2453f003ac.css" crossorigin="anonymous">
         <style>
+            :root {
+                --black: #19191B;
+                --subtitle1: #61646B;
+                --subtitle2: #AFB1B6;
+                --background: #EFEFF0;
+                --surface: #FAFAFA;
+                --primary-purple: #3A00E5;
+                --primary-subtle: #F7F5FF;
+                --primary-black: #000000;
+                --primary-subtle-white: #FFFFFF;
+                --custom-border: 1px solid var(--primary-purple);
+                --custom-border-radius-img: 5%;
+                --custom-border-radius-p: 2%;
+            }
+
             body {
                 display: flex;
                 flex-direction: column;
@@ -32,6 +47,19 @@
                 border: 3px solid #3A00E5;
                 border-radius:5px;
                 padding: 2px;
+            }
+
+            .media-right img {
+                border: var(--custom-border);
+                border-radius: var(--custom-border-radius-img);
+                margin-top: 10px;
+            }
+
+            .content p {
+                border: var(--custom-border);
+                border-radius: var(--custom-border-radius-p);
+                height: 200px;
+                padding: 10px;
             }
         </style>
     </head>
@@ -87,42 +115,38 @@
 
                         <div class="column is-two-thirds">
                             <h2 class="subtitle">Matching the right people with the right job.</h2>
-                            <div class="card">
-                                <div class="card-content">
-
-                                    <div class="border content">
-                                        <p>Hi, my name is Ben Ramos.</p>
-                                        <p>I am a UX Designer with a focus on fintech and SaaS technologies.</p>
-                                        <p>Check out some of my latest projects below.</p>
+                            <article class="card">
+                                <header class="card-header mb-3">
+                                    <p class="card-header-title">
+                                        Component
+                                    </p>
+                                    <button class="card-header-icon" aria-label="more options">
+                                        <span class="icon">
+                                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                        </span>
+                                    </button>
+                                </header>
+                                <div class="media p-2">
+                                    <div class="media-content mt-3">
+                                        <div class="content">
+                                            <p>Hi, my name is Ben Ramos. <br>
+                                            I am a UX Designer with a focus on fintech and SaaS technologies. <br>
+                                            Check out some of my latest projects below.</p>
+                                        </div>
                                     </div>
-
-                                    <div class="media">
-                                        <div class="border media-left">
-                                            <figure class="image is-96x96">
-                                              <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                                            </figure>
-                                        </div>
-                                        <div class="border media-left">
-                                            <figure class="image is-96x96">
-                                              <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                                            </figure>
-                                        </div>
-                                        <div class="border media-left">
-                                            <figure class="image is-96x96">
-                                              <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                                            </figure>
-                                        </div>
+                                    <div class="media-right">
+                                        <p class="image is-64x64">
+                                            <img alt="Image #1" src="https://bulma.io/images/placeholders/64x64.png">
+                                        </p>
+                                        <p class="image is-64x64">
+                                            <img alt="Image #2" src="https://bulma.io/images/placeholders/64x64.png">
+                                        </p>
+                                        <p class="image is-64x64">
+                                            <img alt="Image #3" src="https://bulma.io/images/placeholders/64x64.png">
+                                        </p>
                                     </div>
                                 </div>
-                                <footer class="border card-footer">
-                                    <p class="card-footer-item">Junior</p>
-                                    <p class="card-footer-item">Likes</p>
-                                    <p class="card-footer-item">Comments</p>
-                                    <p class="card-footer-item">#fintech</p>
-                                    <p class="card-footer-item">#B2B</p>
-                                    <p class="card-footer-item">#tech</p>
-                                </footer>
-                            </div>
+                            </article>
                         </div>
                     </div>
                 </div>
