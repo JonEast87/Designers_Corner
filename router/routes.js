@@ -272,12 +272,12 @@ app.post("/users/:username/add", ensureAuthenticated, checkOwnership, async (req
 
 // --- LIST PORTFOLIOS ---
 app.get("/", ensureAuthenticated, async(req, res, next) => {
-    Portfolio.find()
-        .sort({ createdAt: "descending" })
-        .exec((err, portfolios) => {
-            if (err) return next(err);
-            res.render("index", { portfolios: portfolios });
-    });
+    try {
+        const portfolios = await Portfolio.find().sort({ createdAt: "descending" });
+        res.status(200).render("index", { portfolios: portfolios });
+    } catch (error) {
+        res.status(404).send({ error: "No portfolios." });
+    }
 });
 
 // --- CREATE PORTFOLIO ---
@@ -321,7 +321,8 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
     try {
         const comment = await Comment.find({ portfolio: req.params.portfolio });
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: comment });
+        const user = await User.findOne({ _id: portfolio.authorId });
+        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: comment, user: user });
     } catch (error) {
         res.status(404).send({ error: "Post does not match." });
     }

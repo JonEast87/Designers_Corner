@@ -1,14 +1,25 @@
 <%- include("partials/_header") %>
-    <div class="column is-one-third is-offset-one-quarter">
+    <div class="column is-half is-offset-one-quarter">
+        <h3 class="subtitle">UX Design Portfolios</h3>
         <% portfolios.forEach(function(portfolio) {%>
             <article class="card">
                 <header class="card-header mb-3">
                     <p class="card-header-title">
-                        Component
+                        <%= portfolio.author %>
                     </p>
-                    <button class="card-header-icon" aria-label="more options">
+                    <button class="card-header-icon" aria-label="user">
                         <span class="icon">
-                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                            <a href="/users/<%= portfolio.author %>"><i class="fa-solid fa-user"></i></a>
+                        </span>
+                    </button>
+                    <button class="card-header-icon" aria-label="comment">
+                        <span>
+                            <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
+                        </span>
+                    </button>
+                    <button class="card-header-icon" aria-label="like">
+                        <span>
+                            <a href="#"><i class="fa-solid fa-heart"></i></a>
                         </span>
                     </button>
                 </header>
@@ -29,6 +40,15 @@
                             <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
                         </p>
                     </div>
+                </div>
+                <hr>
+                <div class="card-content">
+                    <form action="" method="POST">
+                        <div class="field">
+                            <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"></textarea>
+                        </div>
+                        <button class="button is-link">Submit</button>
+                    </form>
                 </div>
             </article>
         <% }) %>
