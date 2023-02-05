@@ -6,7 +6,7 @@ const passport = require("passport");
 // --- file imports --- //
 const app = express.Router();
 const Comment = require("../models/comments");
-const Profile = require("../models/profile");
+// const Profile = require("../models/profile");
 const Portfolio = require("../models/portfolio");
 const User = require("../models/user");
 
@@ -152,12 +152,6 @@ app.delete("/delete/:username", ensureAuthenticated, checkOwnership, async (req,
 
     try {
        await User.findByIdAndDelete(user.id, req.user);
-       await Profile.deleteOne({ profileAuthor: user.id })
-           .then(function() {
-               console.log("Profile deleted.");
-           }).catch(function(error) {
-               console.log(error);
-           });
        await Portfolio.deleteMany({ authorId: user.id, name: { $gte: req.params.username }})
            .then(function() {
                 console.log("Portfolio deleted.");
@@ -182,9 +176,8 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     // Using async call since this function returns more than one promise
     try {
         let user = await User.findOne({ username: req.params.username });
-        let profile = await Profile.findOne({ profileAuthor: user.id });
         const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("view-profile", { user: user, portfolios: portfolios, profile: profile });
+        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
     } catch (error) {
         res.status(404).send({ error: "User does not exist." });
     }
@@ -197,7 +190,7 @@ app.get("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, 
 });
 
 app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, async (req, res, next) => {
-    const newProfile = new Profile({
+    const newProfile = new Object({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
         profileImage: req.body.profileImage,
@@ -209,9 +202,9 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership,
         const user = await User.findOne({ username: req.params.username });
 
         if (user.profileExists === false) {
-            await newProfile.save(next);
+            user.profile = newProfile;
             user.profileExists = true;
-            user.save(next);
+            await user.save(next);
             req.flash("info", "Profile created for your account.");
             return res.status(201).redirect("/users/" + req.params.username);
         } else {
@@ -227,23 +220,25 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership,
 // -- EDIT PROFILE ---
 app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
    const user = User.findOne({ username: req.params.username });
-   console.log(req.params);
    res.status(200).render("edit-profile", { user: user });
 });
 
-app.patch("/profiles/edit_profile", ensureAuthenticated, checkOwnership, async (req, res) => {
-    const options = { new: true };
-    const updatedData = req.body;
+app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
+    const profileSkills = req.body.purpose,
+        profilePurpose = req.body.skills,
+        profileBio = req.body.bio,
+        profileImage = req.body.profileImage;
 
     try {
-        console.log(req.body);
-        let user = await User.findOne({ username: req.params.username });
-        let profile = await Profile.findOne({ profileAuthor: res.locals.currentUser._id });
-        await Profile.findByIdAndUpdate(profile.id, updatedData, options);
+        let user = await User.findOne({ username: res.locals.currentUser.username });
+        user.profile.skills = profileSkills;
+        user.profile.purpose = profilePurpose;
+        user.profile.bio = profileBio;
+        user.profile.profileImage = profileImage;
+        await user.save();
         req.flash("info", "Profile has been successfully updated.");
         res.status(201).redirect("/users/" + res.locals.currentUser.username);
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "Profile does not match." });
     }
 });

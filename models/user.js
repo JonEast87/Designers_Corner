@@ -1,16 +1,37 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt-nodejs");
 
+// Import commentSchema, jobSchema and portfolioSchema to include inside the User model's portfolio array
+// for easier access
+const { commentSchema } = require("./comments");
+const { jobSchema } = require("./jobs");
+const { portfolioSchema } = require("./portfolio");
 const { Schema } = mongoose;
 const SALT_FACTOR = 10;
 const noop = () => {};
 
+// Declaring the profile with the User model now
+const profileSchema = new Schema({
+    bio: { type: String },
+    createdAt: { type: Date, default: Date.now() },
+    profileAuthor: { type: mongoose.Schema.Types.ObjectId, required: true },
+    profileImage: { type: String, required: false },
+    purpose: { type: String },
+    skills: { type: String }
+});
+
 const userSchema = new Schema({
+    // Integrating the comment model into the user model
+    // comments: [commentSchema],
     createdAt: { type: Date, default: Date.now() },
     friendsList: [ { name: { type: String, required: false } }],
+    // Integrating the job model the user model
+    // jobs: [jobSchema],
+    // portfolios: [portfolioSchema],
     password: { type: String, required: true },
     phoneNumber: { type: Number, required: true },
-    profile: { type: mongoose.Schema.Types.ObjectId, required: false },
+    // Integrating the profile model into the user model
+    profile: profileSchema,
     profileExists: { type: Boolean, required: true, default: false },
     username: { type: String, required: true, unique: true }
 });

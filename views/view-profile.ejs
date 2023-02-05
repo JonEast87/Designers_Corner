@@ -49,14 +49,14 @@
                 <% if (user.profileExists === true) { %>
                 <div class="card-image">
                     <figure class="image is-4by3">
-                        <img src="<%= profile.profileImage %>" class="card-img-top" alt="Profile Image">
+                        <img src="<%= user.profile.profileImage %>" class="card-img-top" alt="Profile Image">
                     </figure>
                 </div>
                 <div class="card-content">
                   <div class="media">
                       <div class="media-left">
                           <figure class="image is-48x48">
-                                <img src="<%= profile.profileImage %>" class="card-img-top" alt="Profile Image">
+                                <img src="<%= user.profile.profileImage %>" class="card-img-top" alt="Profile Image">
                           </figure>
                       </div>
                   </div>
@@ -71,7 +71,7 @@
                     <li class="is-active">
                         <a>
                             <span class="icon is-small"><i class="fa-regular fa-clipboard"></i></span>
-                            <span><%= profile.purpose %></span>
+<!--                            <span> <%= /* profile.purpose */ %></span>-->
                         </a>
                     </li>
                   </ul>
