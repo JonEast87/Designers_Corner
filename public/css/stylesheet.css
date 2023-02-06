@@ -11,7 +11,7 @@
     --primary-subtle-white: #FFFFFF;
     --custom-border: 1px solid var(--primary-purple);
     --custom-border-radius-img: 5%;
-    --custom-border-radius-p: 2%;
+    --custom-border-radius-p: 1%;
 }
 
 /* Vanilla Selectors */

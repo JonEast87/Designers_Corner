@@ -1,28 +1,13 @@
 <%- include("partials/_header") %>
 
-    <br>
-
-    <div class="row">
-        <div class="card">
-            <div class="col">
-                <form action="/portfolios/<%= portfolio.portfolio %>/<%= comment._id %>?_method=PATCH" method="POST">
-                    <div class="card-body">
-                        <h5 class="card-title">Edit your Comment</h5>
-
-                        <br>
-
-                        <div class="input-group">
-                          <span class="input-group-text">Textarea</span>
-                          <textarea name="comment" class="form-control" aria-label="Textarea"><%= comment.comment %></textarea>
-                        </div>
-
-                        <br>
-
-                        <input type="submit" value="Edit Comment" class="btn btn-primary btn-block">
-                    </div>
-                </form>
+    <div class="card-content">
+        <form action="/portfolios/<%= portfolio.title %>/edit_comment?_method=PATCH" method="POST">
+            <div class="field">
+                <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"><%= comment.comment %></textarea>
             </div>
-        </div>
+            <button class="button is-link">Submit</button>
+            <a class="button is-warning" href="/portfolios/<%= portfolio.title %>">Cancel</a>
+        </form>
     </div>
 
 <%- include("partials/_footer") %>

@@ -5,8 +5,6 @@ const passport = require("passport");
 
 // --- file imports --- //
 const app = express.Router();
-const Comment = require("../models/comments");
-// const Profile = require("../models/profile");
 const Portfolio = require("../models/portfolio");
 const User = require("../models/user");
 
@@ -28,14 +26,30 @@ function ensureAuthenticated(req, res, next) {
     }
 }
 
-function checkOwnership(req, res, next) {
+const checkUser = async (req, res, next) => {
     const username = req.params.username;
-    const currentUser = res.locals.currentUser.username;
+    const data = await User.findOne({ username: username });
+    const currentUserID = res.locals.currentUser._id;
 
-    if (username === currentUser) {
+    if (data._id.equals(currentUserID)) {
         next();
     } else {
-        req.flash("error", "You are not allowed access.");
+        console.log(data._id);
+        console.log(currentUserID);
+        req.flash("error", "You are not the owner of this account.");
+        res.status(403).redirect("/");
+    }
+}
+
+const checkAuthor = async (req, res, next) => {
+    const portfolio = req.params.portfolios;
+    const data = await Portfolio.findOne({ title: portfolio });
+    const currentUserID = res.locals.currentUser._id;
+
+    if (data.authorId.equals(currentUserID)) {
+        next();
+    } else {
+        req.flash("error", "You are not the author of this content.");
         res.status(403).redirect("/");
     }
 }
@@ -96,7 +110,7 @@ app.post("/signup", async (req, res, next) => {
 }));
 
 // --- UPDATE USER ---
-app.get("/users/:username/edit", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/users/:username/edit", ensureAuthenticated, checkUser, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-user", { user: user });
@@ -105,7 +119,7 @@ app.get("/users/:username/edit", ensureAuthenticated, checkOwnership, async (req
     }
 });
 
-app.patch("/users/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.patch("/users/:username", ensureAuthenticated, checkUser, async (req, res) => {
     // Simple UPDATE function that captures any changed made in the variable fields and saves it via mongoose .save()
     const options = { new: true };
     const updatedData = req.body;
@@ -121,7 +135,7 @@ app.patch("/users/:username", ensureAuthenticated, checkOwnership, async (req, r
 });
 
 // --- UPDATE USER PASSWORD ---
-app.get("/password/:username/edit_password", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/password/:username/edit_password", ensureAuthenticated, checkUser, async (req, res) => {
    try {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("edit-userpassword", { user: user });
@@ -130,7 +144,7 @@ app.get("/password/:username/edit_password", ensureAuthenticated, checkOwnership
    }
 });
 
-app.patch("/password/:username/edit_password", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.patch("/password/:username/edit_password", ensureAuthenticated, checkUser, async (req, res) => {
     let password = req.body.password;
     let user = await User.findOne({ username: req.params.username });
     try {
@@ -145,7 +159,7 @@ app.patch("/password/:username/edit_password", ensureAuthenticated, checkOwnersh
 });
 
 // --- DELETE USER ---
-app.delete("/delete/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.delete("/delete/:username", ensureAuthenticated, checkUser, async (req, res) => {
    /* Upon user deletion this function uses a manual cascade that searches for any comments / portfolios the user
    owns and removes them as well. */
    let user = await User.findOne({ username: req.params.username });
@@ -184,12 +198,12 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
 });
 
 // --- ADD USER PROFILE ---
-app.get("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/profiles/add_profile/:username", ensureAuthenticated, checkAuthor, async (req, res) => {
     const user = await User.findOne({ username: req.params.username });
     res.render("add-profile", { user: user });
 });
 
-app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership, async (req, res, next) => {
+app.post("/profiles/add_profile/:username", ensureAuthenticated, checkAuthor, async (req, res, next) => {
     const newProfile = new Object({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
@@ -218,7 +232,7 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, checkOwnership,
 });
 
 // -- EDIT PROFILE ---
-app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkAuthor, async (req, res) => {
    const user = User.findOne({ username: req.params.username });
    res.status(200).render("edit-profile", { user: user });
 });
@@ -244,7 +258,7 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 });
 
 // --- ADD FRIEND ---
-app.post("/users/:username/add", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.post("/users/:username/add", ensureAuthenticated, checkAuthor, async (req, res) => {
     const friendToAdd = req.params.username;
 
     try {
@@ -314,17 +328,17 @@ app.post("/add", ensureAuthenticated, async (req, res, next) => {
 app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) => {
     // Using async call since this function returns more than one promise
     try {
-        const comment = await Comment.find({ portfolio: req.params.portfolio });
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        const user = await User.findOne({ _id: portfolio.authorId });
-        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: comment, user: user });
+        const portfolioComments = await Portfolio.findOne({ title: req.params.portfolio }).populate("comments");
+        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: portfolioComments });
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "Post does not match." });
     }
 });
 
 // --- UPDATE PORTFOLIO ---
-app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async (req, res) => {
    try {
        let portfolio = await Portfolio.findOne({ title: req.params.portfolios });
        res.status(200).render("edit-portfolio", { portfolio: portfolio });
@@ -333,7 +347,7 @@ app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkOwnership, asy
    }
 });
 
-app.patch("/portfolios/:portfolio", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.patch("/portfolios/:portfolio", ensureAuthenticated, checkAuthor, async (req, res) => {
     const options = { new: true };
     const updatedData = req.body;
 
@@ -349,7 +363,7 @@ app.patch("/portfolios/:portfolio", ensureAuthenticated, checkOwnership, async (
 });
 
 // --- DELETE PORTFOLIO ---
-app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, checkAuthor, async (req, res) => {
     try {
         await Portfolio.deleteOne({ title: req.params.portfolio });
         req.flash("info", "Portfolio has been successfully deleted.");
@@ -367,8 +381,7 @@ app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, checkOwnership, 
 app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        const comment = await Portfolio.find({ portfolio: req.params.portfolio });
-        res.status(200).render("add-comment", { portfolio: portfolio, comment: comment });
+        res.status(200).render("add-comment", { portfolio: portfolio });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
@@ -378,18 +391,20 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
     /* CREATE method that captures the entry input and saves it to the Comment model,
      it is associated with its Portfolio by including the Portfolio id
      allowing easy rendering on the HTML/EJS file */
-    const newComment = new Comment({
-       authorId: res.locals.currentUser._id,
+    const newComment = new Object({
        author: res.locals.currentUser.username,
-       portfolio: req.params.portfolio,
+       authorID: res.locals.currentUser._id,
        comment: req.body.comment
    });
 
     try {
-       await newComment.save(next);
-       req.flash("info", "Comment added.");
-       res.status(201).redirect("/");
+        const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        portfolio.comments.push(newComment);
+        portfolio.save(next);
+        req.flash("info", "Comment added.");
+        res.status(201).redirect("/");
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "Post does not match." });
     }
 });
@@ -398,32 +413,29 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 app.get("/portfolios/:portfolio/view_comment/:comment", ensureAuthenticated, async (req, res) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        const comment = await Portfolio.find({ portfolio: req.params.portfolio });
-        res.status(200).render("view-comment", { portfolio: portfolio, comment: comment });
+        const portfolioComments = await Portfolio.findOne({ title: req.params.portfolio }).populate("comments");
+        res.status(200).render("view-comment", { portfolio: portfolio, comments: portfolioComments });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
 });
 
 // --- UPDATE COMMENT ---
-app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, async (req, res) => {
     try {
-        const comment = await Comment.findById(req.params.comment);
-        const portfolio = await Comment.findOne({ title: req.params.portfolio });
-        console.log(req.params);
-        res.status(200).render("edit-comment", { comment: comment, portfolio: portfolio });
+        const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
+        const comment = portfolio.comments.find(({ _id }) => _id.toString() === req.params.comment);
+        res.status(200).render("edit-comment", { portfolio: portfolio, comment: comment });
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "This comment does not exist." });
     }
 });
 
-app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, res) => {
     const options = { new: true };
     const updatedData = req.body;
 
     try {
-
         await Comment.findByIdAndUpdate(req.params.comment, updatedData, options);
         req.flash("info", "Comment has been successfully updated.");
         res.status(201).redirect("/portfolios/" + req.params.portfolio);
@@ -433,7 +445,7 @@ app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, checkOwnership
 });
 
 // --- DELETE  COMMENT ---
-app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, checkOwnership, async (req, res) => {
+app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, async (req, res) => {
     try {
         const id = req.params.comment;
         await Comment.findByIdAndDelete(id);
