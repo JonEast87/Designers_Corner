@@ -1,43 +1,43 @@
 <%- include("../partials/_header_user") %>
 
-    <div class="column is-4">
-        <form action="/users/<%= user.username %>?_method=PATCH" method="POST">
-            <div class="container is-max-desktop">
-                <div class="field">
-                    <p class="control">
-                        <label class="label" for="username">Username</label>
-                        <input class="input" id="username" name="username" type="text" value="<%= user.username %>" disabled>
-                    </p>
-                </div>
-
-                <div class="field">
-                    <p class="control">
-                        <label class="label" for="phoneNumber">Phone Number</label>
-                        <input class="input" id="phoneNumber" name="phoneNumber" type="number" value="<%= user.phoneNumber %>">
-                    </p>
-                    <p class="help">xxx-xxx-xxxx</p>
-                </div>
-
-                <div class="field">
-                    <p class="control">
-                        <label class="label" for="profileImage">Profile Image</label>
-                        <input class="input" id="profileImage" name="profileImage" type="text" value="<%= user.profileImage %>">
-                    </p>
-                </div>
-
-                <div class="field is-grouped">
-                    <p class="control">
-                        <button class="input has-text-white has-background-link" type="submit">Submit</button>
-                    </p>
-                    <p class="control">
-                        <a class="input has-text-black has-background-warning" href="/password/<%= user.username%>/edit_password">Update Password</a>
-                    </p>
-                    <p class="control">
-                        <a class="input has-text-white has-background-dark" href="/users/<%= user.username %>">Go Back</a>
-                    </p>
-                </div>
+<div class="column is-4">
+    <form action="/users/<%= user.username %>?_method=PATCH" method="POST">
+        <div class="container is-max-desktop">
+            <div class="field">
+                <p class="control">
+                    <label class="label" for="username">Username</label>
+                    <input class="input" id="username" name="username" type="text" value="<%= user.username %>" disabled>
+                </p>
             </div>
-        </form>
-    </div>
+
+            <div class="field">
+                <p class="control">
+                    <label class="label" for="phoneNumber">Phone Number</label>
+                    <input class="input" id="phoneNumber" name="phoneNumber" type="number" value="<%= user.phoneNumber %>">
+                </p>
+                <p class="help">xxx-xxx-xxxx</p>
+            </div>
+
+            <div class="field">
+                <p class="control">
+                    <label class="label" for="profileImage">Profile Image</label>
+                    <input class="input" id="profileImage" name="profileImage" type="text" value="<%= user.profileImage %>">
+                </p>
+            </div>
+
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="input has-text-white has-background-link" type="submit">Submit</button>
+                </p>
+                <p class="control">
+                    <a class="input has-text-black has-background-warning" href="/password/<%= user.username%>/edit_password">Update Password</a>
+                </p>
+                <p class="control">
+                    <a class="input has-text-white has-background-dark" href="/users/<%= user.username %>">Go Back</a>
+                </p>
+            </div>
+        </div>
+    </form>
+</div>
 
 <%- include("../partials/_footer") %>

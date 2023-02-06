@@ -11,8 +11,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@creativebulma/bulma-tagsinput": "^1.0.3",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.20.1",
+    "bulma-extensions": "^6.2.7",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",

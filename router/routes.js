@@ -1,5 +1,4 @@
 // --- imports --- //
-const bcrypt = require("bcrypt-nodejs");
 const express = require("express");
 const passport = require("passport");
 

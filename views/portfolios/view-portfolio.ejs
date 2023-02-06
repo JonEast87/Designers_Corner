@@ -1,59 +1,59 @@
 <%- include("../partials/_header") %>
 
-    <div class="column is-half">
-        <article class="card">
-            <header class="card-header mb-3">
-                <p class="card-header-title is-centered">
-                    <%= portfolio.title %>
-                </p>
-            </header>
-            <div class="media p-2">
-                <div class="media-content mt-3">
-                    <div class="content">
-                        <p><%= portfolio.description %></p>
-                    </div>
-                </div>
-                <div class="media-right">
-                    <p class="image is-64x64">
-                        <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
-                    </p>
-                    <p class="image is-64x64">
-                        <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
-                    </p>
-                    <p class="image is-64x64">
-                        <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
-                    </p>
+<div class="column is-half">
+    <article class="card">
+        <header class="card-header mb-3">
+            <p class="card-header-title is-centered">
+                <%= portfolio.title %>
+            </p>
+        </header>
+        <div class="media p-2">
+            <div class="media-content mt-3">
+                <div class="content">
+                    <p><%= portfolio.description %></p>
                 </div>
             </div>
-            <footer class="card-footer">
-                <% if (currentUser)  { %>
-                    <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
-                <% } %>
-                <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
-                    <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
-                    <a class="card-footer-item" href="/delete/<%= portfolio.title %>">Delete Portfolio</a>
-                <% } %>
-            </footer>
+            <div class="media-right">
+                <p class="image is-64x64">
+                    <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
+                </p>
+                <p class="image is-64x64">
+                    <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                </p>
+                <p class="image is-64x64">
+                    <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                </p>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <% if (currentUser)  { %>
+                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
+            <% } %>
+            <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
+                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
+                <a class="card-footer-item" href="/delete/<%= portfolio.title %>">Delete Portfolio</a>
+            <% } %>
+        </footer>
+    </article>
+    <hr>
+    <% comments.comments.forEach(function(comment) { %>
+        <article class="message is-link p-2">
+            <div class="message-header">
+                <%= comment.author %>
+            <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
+                <form action="/portfolios/<%= portfolio.title %>/comment/<%= comment._id %>?_method=DELETE" method="POST">
+                    <button class="delete is-medium" aria-label="delete"></button>
+                </form>
+            <% } %>
+            </div>
+            <div class="message-body">
+                <%= comment.comment %>
+            </div>
+            <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
+                <a class="button is-link" href="/portfolios/<%= portfolio.title %>/edit_comment/<%= comment._id.toString() %>">Edit Comment</a>
+            <% } %>
         </article>
-        <hr>
-        <% comments.comments.forEach(function(comment) { %>
-            <article class="message is-link p-2">
-                <div class="message-header">
-                    <%= comment.author %>
-                <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
-                    <form action="/portfolios/<%= portfolio.title %>/comment/<%= comment._id %>?_method=DELETE" method="POST">
-                        <button class="delete is-medium" aria-label="delete"></button>
-                    </form>
-                <% } %>
-                </div>
-                <div class="message-body">
-                    <%= comment.comment %>
-                </div>
-                <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
-                    <a class="button is-link" href="/portfolios/<%= portfolio.title %>/edit_comment/<%= comment._id.toString() %>">Edit Comment</a>
-                <% } %>
-            </article>
-        <% }) %>
-    </div>
+    <% }) %>
+</div>
 
 <%- include("../partials/_footer") %>

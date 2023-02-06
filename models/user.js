@@ -16,7 +16,7 @@ const profileSchema = new Schema({
     profileAuthor: { type: mongoose.Schema.Types.ObjectId, required: true },
     profileImage: { type: String, required: false },
     purpose: { type: String },
-    skills: { type: String }
+    skills: [{ type: String }]
 });
 
 const userSchema = new Schema({
