@@ -58,7 +58,7 @@ const checkAuthor = async (req, res, next) => {
 
 // --- AUTHENTICATE USER --- //
 app.get("/login", function(req, res) {
-    res.render("login");
+    res.render("users/login");
 });
 
 app.post("/login", async (req, res, next) => {
@@ -77,7 +77,7 @@ app.get("/logout", ensureAuthenticated, function(req, res, next) {
 
 // --- CREATE USER ---
 app.get("/signup", function(req, res) {
-    res.render("add-user");
+    res.render("users/add-user");
 });
 
 app.post("/signup", async (req, res, next) => {
@@ -113,7 +113,7 @@ app.post("/signup", async (req, res, next) => {
 app.get("/users/:username/edit", ensureAuthenticated, checkUser, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
-        res.status(200).render("edit-user", { user: user });
+        res.status(200).render("users/edit-user", { user: user });
     } catch (error) {
         res.status(404).send({ error: "Edit does not exist." });
     }
@@ -138,7 +138,7 @@ app.patch("/users/:username", ensureAuthenticated, checkUser, async (req, res) =
 app.get("/password/:username/edit_password", ensureAuthenticated, checkUser, async (req, res) => {
    try {
         let user = await User.findOne({ username: req.params.username });
-        res.status(200).render("edit-userpassword", { user: user });
+        res.status(200).render("users/edit-userpassword", { user: user });
    } catch (error) {
        res.status(404).send({ error: "Password does not exist." });
    }
@@ -191,19 +191,19 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     try {
         let user = await User.findOne({ username: req.params.username });
         const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("view-profile", { user: user, portfolios: portfolios });
+        res.status(200).render("profiles/view-profile", { user: user, portfolios: portfolios });
     } catch (error) {
         res.status(404).send({ error: "User does not exist." });
     }
 });
 
 // --- ADD USER PROFILE ---
-app.get("/profiles/add_profile/:username", ensureAuthenticated, checkAuthor, async (req, res) => {
+app.get("/profiles/add_profile/:username", ensureAuthenticated, checkUser, async (req, res) => {
     const user = await User.findOne({ username: req.params.username });
-    res.render("add-profile", { user: user });
+    res.render("profiles/add-profile", { user: user });
 });
 
-app.post("/profiles/add_profile/:username", ensureAuthenticated, checkAuthor, async (req, res, next) => {
+app.post("/profiles/add_profile/:username", ensureAuthenticated, checkUser, async (req, res, next) => {
     const newProfile = new Object({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
@@ -232,7 +232,7 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, checkAuthor, as
 });
 
 // -- EDIT PROFILE ---
-app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkAuthor, async (req, res) => {
+app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkUser, async (req, res) => {
    const user = User.findOne({ username: req.params.username });
    res.status(200).render("edit-profile", { user: user });
 });
@@ -258,7 +258,7 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 });
 
 // --- ADD FRIEND ---
-app.post("/users/:username/add", ensureAuthenticated, checkAuthor, async (req, res) => {
+app.post("/users/:username/add", ensureAuthenticated, checkUser, async (req, res) => {
     const friendToAdd = req.params.username;
 
     try {
@@ -291,19 +291,21 @@ app.get("/", ensureAuthenticated, async(req, res, next) => {
 
 // --- CREATE PORTFOLIO ---
 app.get("/add", ensureAuthenticated, async (req, res) => {
-    res.render("add-portfolio");
+    res.render("portfolios/add-portfolio");
 });
 
 app.post("/add", ensureAuthenticated, async (req, res, next) => {
     // CREATE method that checks if Portfolio already exists, if not than a new one is created
     const newPortfolio = new Portfolio({
-        authorId: res.locals.currentUser._id,
         author: res.locals.currentUser.username,
+        authorId: res.locals.currentUser._id,
         description: req.body.description,
-        imageOfOne: req.body.imageOfOne,
-        imageOfTwo: req.body.imageOfTwo,
-        imageOfThree: req.body.imageOfThree,
+        images: req.body.images,
+        // imageOfTwo: req.body.imageOfTwo,
+        // imageOfThree: req.body.imageOfThree,
+        tags: req.body.tags,
         title: req.body.title,
+        url: req.body.url
     });
 
     try {
@@ -330,7 +332,7 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
         const portfolioComments = await Portfolio.findOne({ title: req.params.portfolio }).populate("comments");
-        res.status(200).render("view-portfolio", { portfolio: portfolio, comments: portfolioComments });
+        res.status(200).render("portfolios/view-portfolio", { portfolio: portfolio, comments: portfolioComments });
     } catch (error) {
         console.log(error);
         res.status(404).send({ error: "Post does not match." });
@@ -341,7 +343,7 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
 app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async (req, res) => {
    try {
        let portfolio = await Portfolio.findOne({ title: req.params.portfolios });
-       res.status(200).render("edit-portfolio", { portfolio: portfolio });
+       res.status(200).render("portfolios/edit-portfolio", { portfolio: portfolio });
    } catch(error) {
        res.status(404).send({ error: "Portfolio does not match." });
    }
@@ -381,7 +383,7 @@ app.delete("/delete-portfolio/:portfolio", ensureAuthenticated, checkAuthor, asy
 app.get("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, res, next) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        res.status(200).render("add-comment", { portfolio: portfolio });
+        res.status(200).render("comments/add-comment", { portfolio: portfolio });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
@@ -413,8 +415,9 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 app.get("/portfolios/:portfolio/view_comment/:comment", ensureAuthenticated, async (req, res) => {
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        const portfolioComments = await Portfolio.findOne({ title: req.params.portfolio }).populate("comments");
-        res.status(200).render("view-comment", { portfolio: portfolio, comments: portfolioComments });
+        const comment = portfolio.comments.find(({ _id }) => _id.toString() === req.params.comment);
+        console.log(comment);
+        res.status(200).render("comments/view-comment", { portfolio: portfolio, comment: comment });
     } catch (error) {
         res.status(404).send({ error: "No portfolio exists for this comment." });
     }
@@ -425,7 +428,7 @@ app.get("/portfolios/:portfolio/edit_comment/:comment", ensureAuthenticated, asy
     try {
         const portfolio = await Portfolio.findOne({ title: req.params.portfolio });
         const comment = portfolio.comments.find(({ _id }) => _id.toString() === req.params.comment);
-        res.status(200).render("edit-comment", { portfolio: portfolio, comment: comment });
+        res.status(200).render("comments/edit-comment", { portfolio: portfolio, comment: comment });
     } catch (error) {
         res.status(404).send({ error: "This comment does not exist." });
     }

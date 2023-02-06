@@ -1,0 +1,15 @@
+<%- include("../partials/_header") %>
+
+        <div class="columns is-mobile is-centered">
+            <div class="column is-4">
+                <article class="message">
+                    <div class="message-header">
+                        From <%= comment.author %>
+                        <button class="delete" aria-label="delete"></button>
+                    </div>
+                    <div class="message-body"><%= comment.comment %></div>
+                </article>
+            </div>
+        </div>
+
+<%- include("../partials/_footer") %>

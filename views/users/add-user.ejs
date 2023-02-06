@@ -1,0 +1,99 @@
+<%- include("../partials/_header_user") %>
+
+    <div class="column is-4">
+        <form action="/signup" method="POST">
+            <div class="container is-max-desktop">
+
+                <h1 class="title">Designer's Corner</h1>
+
+                <h2 class="subtitle">Create your account</h2>
+
+                <div class="field">
+                    <label for="username" class="label">Username</label>
+                    <p class="control has-icons-left">
+                        <input class="input" id="username" name="username" type="text" required autofocus>
+                        <span class="icon is-small is-left">
+                            <i class="fa-regular fa-user"></i>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="field">
+                    <label for="password" class="label">Password</label>
+                    <p class="control has-icons-left">
+                        <input class="input" id="password" name="password" type="password" required>
+                        <span class="icon is-small is-left">
+                            <i class="fas fa-lock"></i>
+                        </span>
+                    </p>
+                </div>
+
+                <div class="field">
+                    <label for="phoneNumber" class="label">Phone Number</label>
+                    <p class="control">
+                        <input class="input" id="phoneNumber" name="phoneNumber" type="number" required>
+                    </p>
+                     <p class="help">xxx-xxx-xxxx</p>
+                </div>
+
+                <div class="field">
+                    <p class="control">
+                        <button class="input has-text-white has-background-link">Sign Up</button>
+                    </p>
+                </div>
+                <div class="field">
+                    <p class="control">Already have an account? <a href="/login">Sign in!</a></p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="column is-4">
+        <h2 class="subtitle">Matching the right people with the right job.</h2>
+            <article class="card">
+                <header class="card-header mb-3">
+                    <p class="card-header-title">
+                        Portfolio by Jonathan
+                    </p>
+                    <button class="card-header-icon" aria-label="user" disabled>
+                        <span class="icon">
+                            <a href="#"><i class="fa-solid fa-user"></i></a>
+                        </span>
+                    </button>
+                    <button class="card-header-icon" aria-label="open" disabled>
+                        <span class="icon">
+                            <a href="#"><i class="fa-regular fa-folder-open"></i></a>
+                        </span>
+                    </button>
+                    <button class="card-header-icon" aria-label="comment" disabled>
+                        <span>
+                            <a href="#"><i class="fa-solid fa-comment"></i></a>
+                        </span>
+                    </button>
+                    <button class="card-header-icon" aria-label="like" disabled>
+                        <span>
+                            <a href="#"><i class="fa-solid fa-heart"></i></a>
+                        </span>
+                    </button>
+                </header>
+                <div class="media p-2">
+                    <div class="media-content mt-3">
+                        <div class="content">
+                            <p>Portfolio description.</p>
+                        </div>
+                    </div>
+                    <div class="media-right">
+                        <p class="image is-64x64">
+                            <img alt="Image #1" src="https://s1.piq.land/2013/04/30/gTqTatzVbKv4lH7E4ZoXhyuN_400x400.png">
+                        </p>
+                        <p class="image is-64x64">
+                            <img alt="Image #2" src="https://s1.piq.land/2013/04/30/gTqTatzVbKv4lH7E4ZoXhyuN_400x400.png">
+                        </p>
+                        <p class="image is-64x64">
+                            <img alt="Image #3" src="https://s1.piq.land/2013/04/30/gTqTatzVbKv4lH7E4ZoXhyuN_400x400.png">
+                        </p>
+                    </div>
+                </div>
+        </article>
+    </div>
+
+<%- include("../partials/_footer") %>

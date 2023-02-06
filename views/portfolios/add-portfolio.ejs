@@ -1,0 +1,56 @@
+<%- include("../partials/_header") %>
+
+    <div class="column is-4">
+        <form action="/add" method="POST">
+            <div class="container is-max-desktop">
+                <h2 class="subtitle">Add your Portfolio</h2>
+
+                <div class="field">
+                    <label for="title" class="label">Portfolio Name</label>
+                    <input class="input" id="title" name="title" type="text" required autofocus>
+                </div>
+
+                <div class="field">
+                    <label for="images" class="label">Images (max of thee)</label>
+                    <input class="input" id="images" name="images" type="text" required>
+                </div>
+
+<!--                    <div class="field">-->
+<!--                        <label for="imageOfTwo" class="label">Image #2</label>-->
+<!--                        <input class="input" id="imageOfTwo" name="imageOfTwo" type="text" required>-->
+<!--                    </div>-->
+
+<!--                    <div class="field">-->
+<!--                        <label for="imageOfThree" class="label">Image #3</label>-->
+<!--                        <input class="input" id="imageOfThree" name="imageOfThree" type="text" required>-->
+<!--                    </div>-->
+
+                <div class="field">
+                    <label for="tags" class="label">Tags</label>
+                    <input class="input" id="tags" name="portfolio[tags]" type="hidden" value="Fintech,Adobe,Design">
+                </div>
+
+                <div class="field">
+                    <label for="live" class="label">Live Demo</label>
+                    <input class="input" id="live" name="live" type="text">
+                </div>
+
+                <div class="field">
+                  <span class="input-group-text">With textarea</span>
+                  <textarea class="textarea" name="description" aria-label="With textarea"></textarea>
+                </div>
+
+                <div class="field is-grouped">
+                    <p class="control">
+                        <button class="input has-text-white has-background-link">Add Portfolio</button>
+                    </p>
+                    <p class="control">
+                        <a class="input has-text-white has-background-info" href="/">Cancel</a>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+<%- include("../partials/_footer") %>
