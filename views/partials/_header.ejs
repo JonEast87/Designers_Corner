@@ -29,7 +29,11 @@
         <div class="navbar-menu">
             <div class="navbar-end">
                 <% if (currentUser) { %>
-                    <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
+                    <% if (currentUser.portfolioExists === true) { %>
+                        <a class="navbar-item action-button" href="/edit"><i class="fa-regular fa-folder-close"></i></a>
+                    <% } else if (currentUser.portfolioExists === false) { %>
+                        <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
+                    <% } %>
                     <a class="navbar-item action-button" href="/users/<%= currentUser.username %>"><i class="fa-regular fa-user"></i></a>
                     <a class="navbar-item action-button" href="#"><i class="fa-regular fa-building"></i></a>
                     <a class="navbar-item" href="/logout">Sign Out</a>
@@ -40,17 +44,17 @@
         </div>
     </nav>
 
-    <div class="columns is-centered">
-        <% errors.forEach(function(error) { %>
-            <div class="notification is-danger is-light">
-                <button class="delete"></button>
-                <%= error %>
-            </div>
-        <% }); %>
+    <% errors.forEach(function(error) { %>
+        <div class="notification is-danger is-light">
+            <button class="delete"></button>
+            <%= error %>
+        </div>
+    <% }); %>
 
-        <% infos.forEach(function(info) { %>
-            <div class="notification is-info is-light" role="alert">
-                <button class="delete"></button>
-                <%= info %>
-            </div>
-        <% }); %>
+    <% infos.forEach(function(info) { %>
+        <div class="notification is-info is-light">
+            <button class="delete"></button>
+            <%= info %>
+        </div>
+    <% }); %>
+    <div class="columns is-centered">

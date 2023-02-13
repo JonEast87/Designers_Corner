@@ -1,16 +1,14 @@
 <%- include("../partials/_header") %>
 
-<div class="columns is-mobile is-centered">
-    <div class="column is-4">
-        <div class="card-content">
-            <form action="/portfolios/<%= portfolio.title %>/edit_comment?_method=PATCH" method="POST">
-                <div class="field">
-                    <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"><%= comment.comment %></textarea>
-                </div>
-                <button class="button is-link">Submit</button>
-                <a class="button is-warning" href="/portfolios/<%= portfolio.title %>">Cancel</a>
-            </form>
-        </div>
+<div class="column is-4">
+    <div class="card-content">
+        <form action="/portfolios/<%= portfolio.title %>/<%= comment._id %>?_method=PATCH" method="POST">
+            <div class="field">
+                <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"><%= comment.comment %></textarea>
+            </div>
+            <button class="button is-link">Submit</button>
+            <a class="button is-warning" href="/portfolios/<%= portfolio.title %>">Cancel</a>
+        </form>
     </div>
 </div>
 

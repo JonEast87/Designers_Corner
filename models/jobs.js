@@ -10,6 +10,7 @@ const jobSchema = new Schema({
     jobDescription: { type: String, required: true },
     jobSkills: [{ type: String, required: true }],
     jobTitle: { type: String, required: true },
+    jobPosterID: { type: mongoose.Schema.Types.ObjectId, require: false },
     projectTypes: [{ type: String, required: true }],
 });
 

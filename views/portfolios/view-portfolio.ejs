@@ -36,7 +36,8 @@
         </footer>
     </article>
     <hr>
-    <% comments.comments.forEach(function(comment) { %>
+    <% if (comments.length >= 1) { %>
+    <% comments.forEach(function(comment) { %>
         <article class="message is-link p-2">
             <div class="message-header">
                 <%= comment.author %>
@@ -54,6 +55,10 @@
             <% } %>
         </article>
     <% }) %>
+    <% } %>
+    <% if (!comments) { %>
+        <article></article>
+    <% } %>
 </div>
 
 <%- include("../partials/_footer") %>

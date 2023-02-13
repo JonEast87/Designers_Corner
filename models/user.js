@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt-nodejs");
 // Import commentSchema, jobSchema and portfolioSchema to include inside the User model's portfolio array
 // for easier access
 const { jobSchema } = require("./jobs");
-const { portfolioSchema } = require("./portfolio");
+const { portfolioSchema } = require("./portfolios");
 const { Schema } = mongoose;
 const SALT_FACTOR = 10;
 const noop = () => {};
@@ -24,10 +24,11 @@ const userSchema = new Schema({
     friendsList: [ { name: { type: String, required: false } }],
     // Integrating the job model the user model
     // jobs: [jobSchema],
-    // portfolios: [portfolioSchema],
     password: { type: String, required: true },
     phoneNumber: { type: Number, required: true },
-    // Integrating the profile model into the user model
+    // Integrating the profile / portfolio model into the user model
+    portfolio: portfolioSchema,
+    portfolioExists: { type: Boolean, default: false },
     profile: profileSchema,
     profileExists: { type: Boolean, required: true, default: false },
     username: { type: String, required: true, unique: true }
