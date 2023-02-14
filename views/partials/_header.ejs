@@ -30,7 +30,7 @@
             <div class="navbar-end">
                 <% if (currentUser) { %>
                     <% if (currentUser.portfolioExists === true) { %>
-                        <a class="navbar-item action-button" href="/edit"><i class="fa-regular fa-folder-close"></i></a>
+                        <a class="navbar-item action-button" href="/portfolios/<%= currentUser.portfolio %>/edit"><i class="fa-regular fa-folder-closed"></i></a>
                     <% } else if (currentUser.portfolioExists === false) { %>
                         <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
                     <% } %>

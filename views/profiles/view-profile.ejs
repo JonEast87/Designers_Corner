@@ -77,9 +77,8 @@
             </div>
         <% }%>
         </div>
-        <% if (portfolios) { %>
+        <% if (portfolio) { %>
         <ul class="mt-6">
-            <% portfolios.forEach(function(portfolio) {%>
             <article class="card">
                 <header class="card-header mb-3">
                     <p class="card-header-title">
@@ -132,7 +131,6 @@
                     <% } %>
                 </footer>
             </article>
-            <% }) %>
         </ul>
         <% } else { %>
             <ul></ul>

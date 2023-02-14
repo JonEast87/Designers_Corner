@@ -44,7 +44,7 @@ const checkUser = async (req, res, next) => {
 
 const checkAuthor = async (req, res, next) => {
     const portfolio = req.params.portfolios;
-    const data = await Portfolio.findOne({ title: portfolio });
+    const data = await User.findOne({ title: portfolio });
     const currentUserID = res.locals.currentUser._id;
 
     if (data.authorId.equals(currentUserID)) {
@@ -200,9 +200,9 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
     // Using async call since this function returns more than one promise
     try {
         let user = await User.findOne({ username: req.params.username });
-        const portfolios = await Portfolio.find({ authorId: user.id});
-        res.status(200).render("profiles/view-profile", { user: user, portfolios: portfolios });
+        res.status(200).render("profiles/view-profile", { user: user, portfolio: user.portfolio });
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "User does not exist." });
     }
 });
@@ -271,15 +271,24 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 // --- PORTFOLIOS --- //
 
 // --- LIST PORTFOLIOS ---
+const collectPortfolios = async (req, res) => {
+    const users = await User.find()
+    let portfolios = new Array();
+
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].portfolio !== undefined) {
+            portfolios.push(users[i].portfolio);
+        }
+    return portfolios;
+    }
+}
+
 app.get("/", ensureAuthenticated, async(req, res, next) => {
     try {
-        const user = await User.find();
-        const portfolios = new Array();
-        for (let i = 0; i < user.length; i++) {
-            portfolios.push(user[i].portfolio);
-        }
+        const portfolios = await collectPortfolios(req, res);
         res.status(200).render("index", { portfolios: portfolios });
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "No portfolios." });
     }
 });

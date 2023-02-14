@@ -2,10 +2,9 @@
 
 <div class="column is-half">
     <h3 class="subtitle">UX Design Portfolios</h3>
-    <% if (!portfolios) { %>
-        <article></article>
-    <% } else { %>
+    <% if (portfolios.length >= 1) { %>
         <% portfolios.forEach(function(portfolio) {%>
+            <hr>
             <article class="card">
                 <header class="card-header mb-3">
                     <p class="card-header-title">
@@ -50,6 +49,8 @@
                 </div>
             </article>
         <% }) %>
+    <% } else { %>
+        <article></article>
     <% } %>
 </div>
 
