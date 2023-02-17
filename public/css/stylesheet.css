@@ -9,8 +9,8 @@
     --primary-subtle: #F7F5FF;
     --primary-black: #000000;
     --primary-subtle-white: #FFFFFF;
-    --custom-border: 1px solid var(--primary-purple);
-    --custom-border-radius-img: 5%;
+    --custom-border: 2px solid var(--primary-purple);
+    --custom-border-radius-img: 10%;
     --custom-border-radius-p: 1%;
 }
 
@@ -33,10 +33,17 @@ nav .action-button {
 .content {
     border: var(--custom-border);
     border-radius: var(--custom-border-radius-p);
-    height: 400px;
     padding: 10px;
 }
 
+.portfolio_info {
+    height: 400px;
+}
+
 /* ID Selectors */
+#bio {
+    height: 125px;
+}
+
 
 /* Media Queries */

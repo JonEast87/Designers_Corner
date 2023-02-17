@@ -2,7 +2,7 @@
 
 <div class="column is-4">
     <% if (portfolio) { %>
-    <article class="card mt-6">
+    <article class="card mt-6 p-1">
         <header class="card-header">
             <p class="card-header-title">
                 <%= portfolio.author %>
@@ -28,19 +28,19 @@
         </header>
         <div class="media">
             <div class="media-content">
-                <div class="content mt-3">
+                <div class="content mt-3 portfolio_info">
                     <%= portfolio.description %>
                 </div>
             </div>
             <div class="media-right">
-                <p class="image is-128x128">
-                    <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
+                <p class="image is-96x96">
+                    <img alt="Image #1" src="<%= portfolio.images[0] %>">
                 </p>
-                <p class="image is-128x128">
-                    <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                <p class="image is-96x96">
+                    <img alt="Image #2" src="<%= portfolio.images[0] %>">
                 </p>
-                <p class="image is-128x128">
-                    <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                <p class="image is-96x96">
+                    <img alt="Image #3" src="<%= portfolio.images[0] %>">
                 </p>
             </div>
         </div>
@@ -59,7 +59,7 @@
 </div>
 
 <div class="column is-4">
-    <div class="card mt-6">
+    <div class="card mt-6 p-1">
         <% if (user.profileExists === true) { %>
         <div class="card-image" style="width: 20rem;">
             <figure class="image is-5by3">
@@ -70,31 +70,34 @@
         <div class="card-body">
             <label class="has-text-weight-bold">Technical Skills</label>
             <nav class="breadcrumb has-arrow-separator" aria-label="skills">
-                <% if (user.profile.skills) { %>
+                <% if (!user.profile) { %>
+                <div>None Listed</div>
+                <% } else { %>
                 <ul>
                     <% user.profile.skills.forEach(function(skill) { %>
                         <li><%= skill %></li>
                     <% }); %>
                 </ul>
-                <% } else { %>
-                    <li>None Listed</li>
                 <% } %>
             </nav>
 
             <label class="has-text-weight-bold">Project Types</label>
             <nav class="breadcrumb has-arrow-separator" aria-label="skills">
-                <% if (user.portfolio.tags) { %>
+                <% if (!user.portfolio) { %>
+                <div>None Listed</div>
+                <% } else { %>
                 <ul>
                     <% user.portfolio.tags.forEach(function(type) { %>
                         <li><%= type %></li>
                     <% }); %>
                 </ul>
-                <% } else { %>
-                    <li>None Listed</li>
                 <% } %>
             </nav>
         </div>
 
+        <div id="bio" class="content">
+            <p><%= user.profile.bio %></p>
+        </div>
 
         <% if ((currentUser) && (currentUser.id === user.id)) { %>
             <div class="buttons is-grouped is-centered">
