@@ -1,64 +1,100 @@
 <%- include("../partials/_header") %>
 
-<div class="column is-half">
-    <div class="container is-max-desktop">
-        <div class="card">
-            <header class="card-header">
-                <p class="card-header-title is-centered">
-                    My Profile: <%= user.username %>
+<div class="column is-4">
+    <% if (portfolio) { %>
+    <article class="card mt-6">
+        <header class="card-header">
+            <p class="card-header-title">
+                <%= portfolio.author %>
+            </p>
+            <button class="card-header-icon" aria-label="user">
+                <span class="icon">
+                    <a href="/users/<%= portfolio.author %>"><i class="fa-solid fa-user"></i></a>
+                </span>
+            </button>
+            <button class="card-header-icon" aria-label="open">
+                <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
+            </button>
+            <button class="card-header-icon" aria-label="comment">
+                <span>
+                    <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
+                </span>
+            </button>
+            <button class="card-header-icon" aria-label="like">
+                <span>
+                    <a href="#"><i class="fa-solid fa-heart"></i></a>
+                </span>
+            </button>
+        </header>
+        <div class="media">
+            <div class="media-content">
+                <div class="content mt-3">
+                    <%= portfolio.description %>
+                </div>
+            </div>
+            <div class="media-right">
+                <p class="image is-128x128">
+                    <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
                 </p>
-            </header>
+                <p class="image is-128x128">
+                    <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
+                </p>
+                <p class="image is-128x128">
+                    <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
+                </p>
+            </div>
+        </div>
+        <footer class="card-footer">
+            <% if (currentUser)  { %>
+                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
+            <% } %>
+            <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
+                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
+            <% } %>
+        </footer>
+    </article>
+    <% } else { %>
+        <ul></ul>
+    <% } %>
+</div>
+
+<div class="column is-4">
+    <div class="card mt-6">
         <% if (user.profileExists === true) { %>
-        <div class="card-image">
-            <figure class="image is-4by3">
+        <div class="card-image" style="width: 20rem;">
+            <figure class="image is-5by3">
                 <img src="<%= user.profile.profileImage %>" class="card-img-top" alt="Profile Image">
             </figure>
         </div>
-        <div class="card-content">
-            <div class="media">
-                <div class="media-left">
-                    <figure class="image is-48x48">
-                        <img src="<%= user.profile.profileImage %>" class="card-img-top" alt="Profile Image">
-                    </figure>
-                </div>
-            </div>
-            <% } %>
-            <div class="media-content">
-                <p>Joined on <%= user.createdAt %></p>
-            </div>
-        </div>
-        <div class="tabs is-centered">
-            <ul>
-                <li class="is-active">
-                    <a>
-                        <span class="icon is-small"><i class="fa-regular fa-clipboard"></i></span>
-                        <!--                            <span> <%= /* profile.purpose */ %></span>-->
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="card-body">
-            <% if ((currentUser) && currentUser.id !== user.id) {%>
-                <form action="/users/<%= user.name() %>/add" method="POST">
-                    <button class="btn btn-primary">Add as a Friend</button>
-                </form>
-            <% }%>
-        </div>
-        <% if (user.friendsList) { %>
-            <ul>
-                <% user.friendsList.forEach(function(friend) {%>
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="card-text">
-                                <a href="/users/<%= friend.name %>">View Friend Profile</a>
-                            </p>
-                        </div>
-                    </div>
-                <% }) %>
-            </ul>
-        <% } else { %>
-            <ul></ul>
         <% } %>
+        <div class="card-body">
+            <label class="has-text-weight-bold">Technical Skills</label>
+            <nav class="breadcrumb has-arrow-separator" aria-label="skills">
+                <% if (user.profile.skills) { %>
+                <ul>
+                    <% user.profile.skills.forEach(function(skill) { %>
+                        <li><%= skill %></li>
+                    <% }); %>
+                </ul>
+                <% } else { %>
+                    <li>None Listed</li>
+                <% } %>
+            </nav>
+
+            <label class="has-text-weight-bold">Project Types</label>
+            <nav class="breadcrumb has-arrow-separator" aria-label="skills">
+                <% if (user.portfolio.tags) { %>
+                <ul>
+                    <% user.portfolio.tags.forEach(function(type) { %>
+                        <li><%= type %></li>
+                    <% }); %>
+                </ul>
+                <% } else { %>
+                    <li>None Listed</li>
+                <% } %>
+            </nav>
+        </div>
+
 
         <% if ((currentUser) && (currentUser.id === user.id)) { %>
             <div class="buttons is-grouped is-centered">
@@ -76,65 +112,6 @@
                 </form>
             </div>
         <% }%>
-        </div>
-        <% if (portfolio) { %>
-        <ul class="mt-6">
-            <article class="card">
-                <header class="card-header mb-3">
-                    <p class="card-header-title">
-                        <%= portfolio.author %>
-                    </p>
-                    <button class="card-header-icon" aria-label="user">
-                        <span class="icon">
-                            <a href="/users/<%= portfolio.author %>"><i class="fa-solid fa-user"></i></a>
-                        </span>
-                    </button>
-                    <button class="card-header-icon" aria-label="open">
-                        <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
-                    </button>
-                    <button class="card-header-icon" aria-label="comment">
-                        <span>
-                            <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
-                        </span>
-                    </button>
-                    <button class="card-header-icon" aria-label="like">
-                        <span>
-                            <a href="#"><i class="fa-solid fa-heart"></i></a>
-                        </span>
-                    </button>
-                </header>
-                <div class="media p-2">
-                    <div class="media-content mt-3">
-                        <div class="content">
-                            <p><%= portfolio.description %></p>
-                        </div>
-                    </div>
-                    <div class="media-right">
-                        <p class="image is-64x64">
-                            <img alt="Image #1" src="<%= portfolio.imageOfOne %>">
-                        </p>
-                        <p class="image is-64x64">
-                            <img alt="Image #2" src="<%= portfolio.imageOfTwo %>">
-                        </p>
-                        <p class="image is-64x64">
-                            <img alt="Image #3" src="<%= portfolio.imageOfThree %>">
-                        </p>
-                    </div>
-                </div>
-                <footer class="card-footer">
-                    <% if (currentUser)  { %>
-                        <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
-                    <% } %>
-                    <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
-                        <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
-                        <a class="card-footer-item" href="/delete/<%= portfolio.title %>">Delete Portfolio</a>
-                    <% } %>
-                </footer>
-            </article>
-        </ul>
-        <% } else { %>
-            <ul></ul>
-        <% } %>
     </div>
 </div>
 

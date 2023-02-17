@@ -1,7 +1,7 @@
 <%- include("../partials/_header") %>
 
 <div class="column is-4">
-    <form action="/profiles/add_profile/<%= user.username %>?_method=PATCH" method="POST">
+    <form action="/profiles/edit_profile?_method=PATCH" method="POST">
         <div class="container is-max-desktop">
             <h1 class="title">Designer's Corner</h1>
             <h2 class="subtitle">Edit about yourself</h2>
@@ -26,19 +26,18 @@
             </div>
 
             <div class="field">
-                <h5>I am skilled at...</h5>
-                <p class="control">
-                    <input class="input is-link" name="skills" type="text" placeholder="Skills" aria-label="Skills">
-                </p>
+                <label for="skills" class="label">I am skilled at...</label>
+                <input id="skills" class="input" type="text" name="skills" placeholder="Separate with a comma" value="<%= user.profile.skills.join(", ") %>">
+                <p class="help">Ensure your three entries are separated with a space and comma.</p>
             </div>
 
             <div class="field">
-                <textarea class="textarea" name="bio" placeholder="I am amazing because..." aria-label="Bio"></textarea>
+                <textarea class="textarea" name="bio" placeholder="I am amazing because..." aria-label="Bio"><%= user.profile.bio %></textarea>
             </div>
 
             <div class="field">
                 <p class="control">
-                <input class="input" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input">
+                <input class="input" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input" value="<%= user.profile.profileImage %>">
                 </p>
             </div>
 

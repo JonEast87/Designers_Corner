@@ -31,7 +31,6 @@
             <% } %>
             <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
                 <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
-                <a class="card-footer-item" href="/delete/<%= portfolio.title %>">Delete Portfolio</a>
             <% } %>
         </footer>
     </article>
@@ -54,7 +53,7 @@
                 <a class="button is-link" href="/portfolios/<%= portfolio.title %>/edit_comment/<%= comment._id.toString() %>">Edit Comment</a>
             <% } %>
         </article>
-    <% }) %>
+    <% }); %>
     <% } %>
     <% if (!comments) { %>
         <article></article>

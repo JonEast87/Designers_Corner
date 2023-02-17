@@ -15,7 +15,7 @@
     "@creativebulma/bulma-tagsinput": "^1.0.3",
     "bcrypt-nodejs": "^0.0.3",
     "body-parser": "^1.20.1",
-    "bulma-extensions": "^6.2.7",
+    "bulma": "^0.9.4",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^4.6.0",
     "cookie-parser": "^1.4.6",
@@ -26,7 +26,8 @@
     "method-override": "^3.0.0",
     "mongoose": "^6.8.3",
     "passport": "^0.6.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "tags-input": "^1.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.20"

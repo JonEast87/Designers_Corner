@@ -35,8 +35,6 @@ const checkUser = async (req, res, next) => {
     if (data._id.equals(currentUserID)) {
         next();
     } else {
-        console.log(data._id);
-        console.log(currentUserID);
         req.flash("error", "You are not the owner of this account.");
         res.status(403).redirect("/");
     }
@@ -46,7 +44,6 @@ const checkAuthor = async (req, res, next) => {
     const portfolio = req.params.portfolios;
     const data = await User.findOne({ title: portfolio });
     const currentUserID = res.locals.currentUser._id;
-
     if (data.authorId.equals(currentUserID)) {
         next();
     } else {
@@ -167,7 +164,6 @@ app.patch("/password/:username/edit_password", ensureAuthenticated, checkUser, a
         req.flash("info", "Password has been updated.");
         res.status(201).redirect("/users/" + req.user.username);
     } catch (error) {
-        console.log(error);
        res.status(404).send({ error: "Update password does not exists." });
     }
 });
@@ -202,7 +198,6 @@ app.get("/users/:username", ensureAuthenticated, async (req, res) => {
         let user = await User.findOne({ username: req.params.username });
         res.status(200).render("profiles/view-profile", { user: user, portfolio: user.portfolio });
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "User does not exist." });
     }
 });
@@ -214,12 +209,14 @@ app.get("/profiles/add_profile/:username", ensureAuthenticated, checkUser, async
 });
 
 app.post("/profiles/add_profile/:username", ensureAuthenticated, checkUser, async (req, res, next) => {
+    let enteredSkills = req.body.skills.split(", ");
+    let splicedSkills = enteredSkills.splice(0, 3);
     const newProfile = new Object({
         profileAuthor: res.locals.currentUser._id,
         bio: req.body.bio,
         profileImage: req.body.profileImage,
         purpose: req.body.purpose,
-        skills: req.body.skills
+        skills: splicedSkills
     });
 
     try {
@@ -243,25 +240,32 @@ app.post("/profiles/add_profile/:username", ensureAuthenticated, checkUser, asyn
 
 // -- EDIT PROFILE ---
 app.get("/profiles/edit_profile/:username", ensureAuthenticated, checkUser, async (req, res) => {
-   const user = User.findOne({ username: req.params.username });
-   res.status(200).render("edit-profile", { user: user });
+   const user = await User.findOne({ username: req.params.username });
+   res.status(200).render("profiles/edit-profile", { user: user });
 });
 
 app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
-    const profileSkills = req.body.purpose,
-        profilePurpose = req.body.skills,
-        profileBio = req.body.bio,
-        profileImage = req.body.profileImage;
+    let enteredSkills = req.body.skills.split(", ");
+    let splicedSkills = enteredSkills.splice(0, 3);
+    const updatedProfile = new Object({
+        profileAuthor: res.locals.currentUser._id,
+        bio: req.body.bio,
+        profileImage: req.body.profileImage,
+        purpose: req.body.purpose,
+        skills: splicedSkills
+    });
 
     try {
-        let user = await User.findOne({ username: res.locals.currentUser.username });
-        user.profile.skills = profileSkills;
-        user.profile.purpose = profilePurpose;
-        user.profile.bio = profileBio;
-        user.profile.profileImage = profileImage;
-        await user.save();
-        req.flash("info", "Profile has been successfully updated.");
-        res.status(201).redirect("/users/" + res.locals.currentUser.username);
+        const user = await User.findById(res.locals.currentUser._id);
+
+        if (user.profileExists === true) {
+            user.profile = updatedProfile;
+            await user.save();
+            req.flash("info", "Profile has been successfully updated.");
+            res.status(201).redirect("/users/" + res.locals.currentUser.username);
+        } else {
+            res.render("/profiles/add_profile");
+        }
     } catch (error) {
         res.status(404).send({ error: "Profile does not match." });
     }
@@ -288,7 +292,6 @@ app.get("/", ensureAuthenticated, async(req, res, next) => {
         const portfolios = await collectPortfolios(req, res);
         res.status(200).render("index", { portfolios: portfolios });
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "No portfolios." });
     }
 });
@@ -337,7 +340,6 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
         const portfolioComments = await user.populate("portfolio.comments");
         res.status(200).render("portfolios/view-portfolio", { portfolio: portfolio, comments: portfolio.comments });
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "Post does not match." });
     }
 });
@@ -429,12 +431,10 @@ app.patch("/portfolios/:portfolio/:comment", ensureAuthenticated, async (req, re
     const updatedData = req.body;
 
     try {
-        console.log(updatedData);
         await Comment.findByIdAndUpdate(req.params.comment, updatedData, options);
         req.flash("info", "Comment has been successfully updated.");
         res.status(201).redirect("/portfolios/" + req.params.portfolio);
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "No comment exists here." });
     }
 });

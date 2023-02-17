@@ -26,12 +26,14 @@ nav .action-button {
     border: var(--custom-border);
     border-radius: var(--custom-border-radius-img);
     margin-top: 10px;
+    height: 100%;
+    width: 100%;
 }
 
-.content p {
+.content {
     border: var(--custom-border);
     border-radius: var(--custom-border-radius-p);
-    height: 200px;
+    height: 400px;
     padding: 10px;
 }
 
