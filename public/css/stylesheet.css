@@ -1,6 +1,8 @@
 /* CSS Variables */
+
 :root {
     --black: #19191B;
+    --border-color: #9747FF;
     --subtitle1: #61646B;
     --subtitle2: #AFB1B6;
     --background: #EFEFF0;
@@ -9,21 +11,24 @@
     --primary-subtle: #F7F5FF;
     --primary-black: #000000;
     --primary-subtle-white: #FFFFFF;
-    --custom-border: 2px solid var(--primary-purple);
+    --custom-border: 2px solid var(--border-color);
     --custom-border-radius-img: 10%;
-    --custom-border-radius-p: 1%;
+    --custom-border-radius-p: 2%;
 }
 
+
 /* Vanilla Selectors */
+
 nav .action-button {
     /*border: 1px solid black;*/
     /*border-radius: 5%;*/
     margin-right: 15px;
 }
 
+
 /* Class Selectors */
+
 .media-right img {
-    border: var(--custom-border);
     border-radius: var(--custom-border-radius-img);
     margin-top: 10px;
     height: 100%;
@@ -31,19 +36,12 @@ nav .action-button {
 }
 
 .content {
-    border: var(--custom-border);
     border-radius: var(--custom-border-radius-p);
     padding: 10px;
 }
 
-.portfolio_info {
-    height: 400px;
-}
 
 /* ID Selectors */
-#bio {
-    height: 125px;
-}
 
 
 /* Media Queries */

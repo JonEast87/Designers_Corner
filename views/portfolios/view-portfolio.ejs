@@ -1,39 +1,7 @@
 <%- include("../partials/_header") %>
 
 <div class="column is-half">
-    <article class="card">
-        <header class="card-header mb-3">
-            <p class="card-header-title is-centered">
-                <%= portfolio.title %>
-            </p>
-        </header>
-        <div class="media p-2">
-            <div class="media-content mt-3">
-                <div class="content portfolio_info">
-                    <p><%= portfolio.description %></p>
-                </div>
-            </div>
-            <div class="media-right">
-                <p class="image is-128x128">
-                    <img alt="Image #1" src="<%= portfolio.images[0] %>">
-                </p>
-                <p class="image is-128x128">
-                    <img alt="Image #2" src="<%= portfolio.images[0] %>">
-                </p>
-                <p class="image is-128x128">
-                    <img alt="Image #3" src="<%= portfolio.images[0] %>">
-                </p>
-            </div>
-        </div>
-        <footer class="card-footer">
-            <% if (currentUser)  { %>
-                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
-            <% } %>
-            <% if ((currentUser) && (currentUser.id === portfolio.authorId.toString())) { %>
-                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/edit">Edit Portfolio</a>
-            <% } %>
-        </footer>
-    </article>
+
     <hr>
     <% if (comments.length >= 1) { %>
     <% comments.forEach(function(comment) { %>
