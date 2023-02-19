@@ -12,12 +12,12 @@
     <body>
 
     <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="navbar-brand">
+        <div class="navbar-brand pl-6">
             <a class="navbar-item" href="/">
                 Designer's Corner
             </a>
 
-            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -25,10 +25,10 @@
         </div>
 
         <div class="navbar-menu">
-            <div class="navbar-end">
+            <div class="navbar-end pr-6">
                 <% if (currentUser) { %>
                     <% if (currentUser.portfolioExists === true) { %>
-                        <a class="navbar-item action-button" href="/portfolios/<%= currentUser.portfolio %>/edit"><i class="fa-regular fa-folder-closed"></i></a>
+                        <a class="navbar-item action-button" href="/portfolios/<%= currentUser.portfolio.title %>/edit"><i class="fa-regular fa-folder-closed"></i></a>
                     <% } else if (currentUser.portfolioExists === false) { %>
                         <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
                     <% } %>

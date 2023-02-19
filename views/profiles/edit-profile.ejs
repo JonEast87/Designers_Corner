@@ -2,7 +2,7 @@
 
 <div class="column is-4">
     <form action="/profiles/edit_profile?_method=PATCH" method="POST">
-        <div class="container is-max-desktop">
+        <div class="container is-max-desktop mt-6">
             <h1 class="title">Designer's Corner</h1>
             <h2 class="subtitle">Edit about yourself</h2>
             <div class="control">
@@ -27,22 +27,22 @@
 
             <div class="field">
                 <label for="skills" class="label">I am skilled at...</label>
-                <input id="skills" class="input" type="text" name="skills" placeholder="Separate with a comma" value="<%= user.profile.skills.join(", ") %>">
-                <p class="help">Ensure your three entries are separated with a space and comma.</p>
+                <input id="skills" class="input is-primary" type="text" name="skills" placeholder="Separate with a comma" value="<%= user.profile.skills.join(", ") %>">
+                <p class="help">Ensure your three entries are separated with a comma and followed with a single space.</p>
             </div>
 
             <div class="field">
-                <textarea class="textarea" name="bio" placeholder="I am amazing because..." aria-label="Bio"><%= user.profile.bio %></textarea>
+                <textarea class="textarea is-primary" name="bio" placeholder="I am amazing because..." aria-label="Bio"><%= user.profile.bio %></textarea>
             </div>
 
             <div class="field">
                 <p class="control">
-                <input class="input" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input" value="<%= user.profile.profileImage %>">
+                <input class="input is-primary" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input" value="<%= user.profile.profileImage %>">
                 </p>
             </div>
 
             <div class="field">
-                <button class="button is-link" type="submit">Edit Profile</button>
+                <button class="button is-primary" type="submit">Edit Profile</button>
             </div>
         </div>
     </form>

@@ -1,10 +1,9 @@
 <%- include("partials/_header") %>
 
-<div class="column is-half">
-    <h3 class="subtitle">UX Design Portfolios</h3>
+<h2 class="title mt-5">UX Design Portfolios</h2>
+<div class="column is-4 mt-6">
     <% if (portfolios.length >= 1) { %>
         <% portfolios.forEach(function(portfolio) {%>
-        <hr>
         <article class="card mt-6">
             <header class="card-header">
                 <p class="card-header-title">
@@ -52,7 +51,98 @@
                     </p>
                 </div>
             </div>
+            <% if (currentUser) { %>
+            <div class="card">
+                <div class="media pl-2 pr-2">
+                    <div class="media-content">
+                        <div class="card-content">
+                            <form action="/portfolios/<%= portfolio.title %>/add_comment" method="POST">
+                                <div class="field">
+                                    <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"></textarea>
+                                </div>
+                                <button class="button is-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
         </article>
+        <hr>
+        <% }) %>
+    <% } else { %>
+        <article></article>
+    <% } %>
+</div>
+
+<div class="column is-4 mt-6">
+    <% if (portfolios.length >= 1) { %>
+        <% portfolios.forEach(function(portfolio) {%>
+        <article class="card mt-6">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <%= portfolio.title %> by <%= portfolio.author %>
+                </p>
+                <button class="card-header-icon" aria-label="user">
+                    <span class="icon">
+                        <a href="/users/<%= portfolio.author %>"><i class="fa-solid fa-user"></i></a>
+                    </span>
+                </button>
+                <button class="card-header-icon" aria-label="open">
+                    <span class="icon">
+                        <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
+                    </span>
+                </button>
+                <button class="card-header-icon" aria-label="comment">
+                    <span class="icon">
+                        <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
+                    </span>
+                </button>
+                <button class="card-header-icon" aria-label="like">
+                    <span class="icon">
+                        <a href="#"><i class="fa-solid fa-heart"></i></a>
+                    </span>
+                </button>
+            </header>
+            <div class="media mt-4 pl-2 pr-2">
+                <div class="media-content">
+                    <div id="description" class="card-content">
+                        <div class="content">
+                            <h2 class="subtitle">Bio</h2>
+                            <%= portfolio.description %>
+                        </div>
+                    </div>
+                </div>
+                <div class="media-right">
+                    <p class="image is-96x96">
+                        <img alt="Image #1" src="<%= portfolio.images[0] %>">
+                    </p>
+                    <p class="image is-96x96 mt-4">
+                        <img alt="Image #2" src="<%= portfolio.images[0] %>">
+                    </p>
+                    <p class="image is-96x96  mt-4 mb-4">
+                        <img alt="Image #3" src="<%= portfolio.images[0] %>">
+                    </p>
+                </div>
+            </div>
+            <% if (currentUser) { %>
+            <div class="card">
+                <div class="media pl-2 pr-2">
+                    <div class="media-content">
+                        <div class="card-content">
+                            <form action="/portfolios/<%= portfolio.title %>/add_comment" method="POST">
+                                <div class="field">
+                                    <textarea class="textarea" placeholder="Comment here." name="comment" aria-label="comment"></textarea>
+                                </div>
+                                <button class="button is-primary">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+        </article>
+        <hr>
         <% }) %>
     <% } else { %>
         <article></article>
