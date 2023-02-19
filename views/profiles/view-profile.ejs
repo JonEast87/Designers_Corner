@@ -13,44 +13,42 @@
                 </span>
             </button>
             <button class="card-header-icon" aria-label="open">
-                <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
+                <span class="icon">
+                    <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
+                </span>
             </button>
             <button class="card-header-icon" aria-label="comment">
-                <span>
+                <span class="icon">
                     <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
                 </span>
             </button>
             <button class="card-header-icon" aria-label="like">
-                <span>
+                <span class="icon">
                     <a href="#"><i class="fa-solid fa-heart"></i></a>
                 </span>
             </button>
         </header>
-        <div class="media">
+        <div class="media mt-4 pl-2 pr-2">
             <div class="media-content">
-                <div class="card-content">
+                <div id="description" class="card-content">
                     <div class="content">
+                        <h2 class="subtitle">Bio</h2>
                         <%= portfolio.description %>
                     </div>
                 </div>
             </div>
-            <div class="media-right pr-6">
-                <p class="image is-96x96 mt-4">
+            <div class="media-right">
+                <p class="image is-96x96">
                     <img alt="Image #1" src="<%= portfolio.images[0] %>">
                 </p>
-                <p class="image is-96x96 mt-6">
+                <p class="image is-96x96 mt-4">
                     <img alt="Image #2" src="<%= portfolio.images[0] %>">
                 </p>
-                <p class="image is-96x96  mt-6">
+                <p class="image is-96x96  mt-4 mb-4">
                     <img alt="Image #3" src="<%= portfolio.images[0] %>">
                 </p>
             </div>
         </div>
-        <footer class="card-footer">
-            <% if (currentUser)  { %>
-                <a class="card-footer-item" href="/portfolios/<%= portfolio.title %>/add_comment">Comment</a>
-            <% } %>
-        </footer>
     </article>
     <% } else { %>
         <ul></ul>
@@ -58,69 +56,52 @@
 </div>
 
 <div class="column is-4">
-    <div class="card mt-6">
-        <% if (user.profileExists === true) { %>
-        <div class="card-content">
-            <div class="card-image">
-                <figure class="image is-5by3">
-                    <img src="<%= user.profile.profileImage %>" class="card-img-top" alt="Profile Image">
-                </figure>
-            </div>
-        </div>
+    <nav class="panel mt-6" aria-label="skills">
+        <p class="panel-heading">Personal Skills</p>
+
+        <% if (!user.profile) { %>
+        <p>None Listed</p>
+        <% } else { %>
+            <% user.profile.skills.forEach(function(skill) { %>
+                <p class="panel-block"><%= skill %></p>
+            <% }); %>
         <% } %>
-        <div class="card-body">
-            <div class="card-content">
-                <label class="has-text-weight-bold">Technical Skills</label>
-                <nav class="breadcrumb has-arrow-separator" aria-label="skills">
-                    <% if (!user.profile) { %>
-                    <div>None Listed</div>
-                    <% } else { %>
-                    <ul>
-                        <% user.profile.skills.forEach(function(skill) { %>
-                            <li><%= skill %></li>
-                        <% }); %>
-                    </ul>
-                    <% } %>
-                </nav>
+    </nav>
 
-                <label class="has-text-weight-bold">Project Types</label>
-                <nav class="breadcrumb has-arrow-separator" aria-label="skills">
-                    <% if (!user.portfolio) { %>
-                    <div>None Listed</div>
-                    <% } else { %>
-                    <ul>
-                        <% user.portfolio.tags.forEach(function(type) { %>
-                            <li><%= type %></li>
-                        <% }); %>
-                    </ul>
-                    <% } %>
-                </nav>
-            </div>
+    <nav class="panel" aria-label="skills">
+        <p class="panel-heading">Project Types</p>
+
+        <% if (!user.portfolio) { %>
+        <div>None Listed</div>
+        <% } else { %>
+            <% user.portfolio.tags.forEach(function(type) { %>
+                <p class="panel-block"><%= type %></p>
+            <% }); %>
+        <% } %>
+    </nav>
+
+    <div class="card-content">
+        <div class="content">
+            <p><%= user.profile.bio %></p>
         </div>
-
-        <div class="card-content">
-            <div class="content">
-                <p><%= user.profile.bio %></p>
-            </div>
-        </div>
-
-        <% if ((currentUser) && (currentUser.id === user.id)) { %>
-            <div class="buttons is-grouped is-centered">
-                <% if (user.profileExists === false) { %>
-                    <a class="button is-primary" href="/profiles/add_profile/<%= user.username %>">Create Profile</a>
-                <% } else { %>
-                    <a class="button is-primary" href="/profiles/edit_profile/<%= user.username %>">Edit Profile</a>
-                <% } %>
-                <form action="/users/<%= user.name() %>/edit" method="GET">
-                    <button class="button is-link">Edit Account</button>
-                </form>
-
-                <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
-                    <button class="button is-warning">Delete Account</button>
-                </form>
-            </div>
-        <% }%>
     </div>
+    <hr>
+    <% if ((currentUser) && (currentUser.id === user.id)) { %>
+        <div class="buttons is-grouped is-centered">
+            <% if (user.profileExists === false) { %>
+                <a class="button is-primary" href="/profiles/add_profile/<%= user.username %>">Create Profile</a>
+            <% } else { %>
+                <a class="button is-primary" href="/profiles/edit_profile/<%= user.username %>">Edit Profile</a>
+            <% } %>
+            <form action="/users/<%= user.name() %>/edit" method="GET">
+                <button class="button is-link">Edit Account</button>
+            </form>
+
+            <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
+                <button class="button is-warning">Delete Account</button>
+            </form>
+        </div>
+    <% }%>
 </div>
 
 <%- include("../partials/_footer") %>

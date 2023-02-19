@@ -9,9 +9,10 @@ $primary-purple: #3A00E5;
 $primary-subtle: #F7F5FF;
 $primary-black: #000;
 $primary-white: #FFF;
+$border: 2px solid $primary-purple;
 
 
-// Bulma Variables
+// Sass Bulma color Variables
 $primary: $primary-purple;
 $link: $primary-subtle;
 $warning: $primary-black;
@@ -20,14 +21,34 @@ $warning: $primary-black;
 // Sass Bulma Button variable customizer
 
 
-// Sass Card variable customizer
-$card-header-background-color: $primary-subtle;
+
+// Bulma Sass Panel variable customizer
+$panel-heading-background-color: $primary-subtle;
+
+
+// Bulma Sass Card variable customizer
+$card-background-color: $primary-subtle;
+$card-content-background-color: $primary-white;
 $card-footer-background-color: $primary-subtle;
 
 
-// Sass Bulma Navbar variable customizer
+// Bulma Sass Navbar variable customizer
+$navbar-item-color: $primary-black;
+$navbar-item-hover-color: $primary-black;
+$navbar-item-hover-background-color: $primary-white;
 $navbar-background-color: $primary-subtle;
 $navbar-height: 4rem;
+
+
+// General CSS rules
+.card-content {
+  border: $border;
+  border-radius: 15px;
+}
+
+#description {
+  height: 20rem;
+}
 
 
 @import "../../node_modules/bulma/bulma.sass";
