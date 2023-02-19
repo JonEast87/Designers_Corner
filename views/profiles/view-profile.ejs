@@ -3,7 +3,7 @@
 <div class="column is-4">
     <% if (portfolio) { %>
     <article class="card mt-6">
-        <header class="card-header has-background-white">
+        <header class="card-header">
             <p class="card-header-title">
                 <%= portfolio.title %> by <%= portfolio.author %>
             </p>
@@ -112,11 +112,11 @@
                     <a class="button is-primary" href="/profiles/edit_profile/<%= user.username %>">Edit Profile</a>
                 <% } %>
                 <form action="/users/<%= user.name() %>/edit" method="GET">
-                    <button class="button is-success">Edit Account</button>
+                    <button class="button is-link">Edit Account</button>
                 </form>
 
                 <form action="/delete/<%= user.name() %>?_method=DELETE" method="POST">
-                    <button class="button is-danger ml-3">Delete Account</button>
+                    <button class="button is-warning">Delete Account</button>
                 </form>
             </div>
         <% }%>

@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+// Beginning of custom variables for Designer's Corner
+
+// Sass custom variables
+$background: #EFEFF0;
+$surface: #FAFAFA;
+$primary-purple: #3A00E5;
+$primary-subtle: #F7F5FF;
+$primary-black: #000;
+$primary-white: #FFF;
+
+
+// Bulma Variables
+$primary: $primary-purple;
+$link: $primary-subtle;
+$warning: $primary-black;
+
+
+// Sass Bulma Button variable customizer
+
+
+// Sass Card variable customizer
+$card-header-background-color: $primary-subtle;
+$card-footer-background-color: $primary-subtle;
+
+
+// Sass Bulma Navbar variable customizer
+$navbar-background-color: $primary-subtle;
+$navbar-height: 4rem;
+
+
+@import "../../node_modules/bulma/bulma.sass";

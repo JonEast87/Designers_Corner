@@ -27,7 +27,7 @@ app.set("view engine", "ejs");
 // Standard Express setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use(express.static('public/css'));
+app.use(express.static('public/sass'));
 app.use(express.static('public/javascript'));
 app.use(cookieParser());
 app.use(session({
