@@ -2,7 +2,7 @@
 
 <div class="column is-4">
     <form action="/profiles/add_profile/<%= user.username %>" method="POST">
-        <div class="container is-max-desktop">
+        <div class="container is-max-desktop mt-6">
             <h1 class="title">Designer's Corner</h1>
             <h2 class="subtitle">Tell us more about yourself</h2>
             <div class="control">
@@ -27,22 +27,22 @@
 
             <div class="field">
                 <label for="skills" class="label">I am skilled at...</label>
-                <input id="skills" class="input" type="text" name="skills" placeholder="Adobe, Fintech, Prototyping">
+                <input id="skills" class="input is-primary" type="text" name="skills" placeholder="User Research, Prototyping, Wireframing">
                 <p class="help">Ensure your three entries are separated with a space and comma.</p>
             </div>
 
             <div class="field">
-                <textarea class="textarea" name="bio" placeholder="I am amazing because..." aria-label="Bio"></textarea>
+                <textarea class="textarea is-primary" name="bio" placeholder="I am amazing because..." aria-label="Bio"></textarea>
             </div>
 
             <div class="field">
                 <p class="control">
-                <input class="input" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input">
+                <input class="input is-primary" name="profileImage" type="text" placeholder="URL to your profile image" aria-label="Profile Img Input">
                 </p>
             </div>
 
             <div class="field">
-                <button class="button is-link" type="submit">Create Profile</button>
+                <button class="button is-primary" type="submit">Create Profile</button>
             </div>
         </div>
     </form>

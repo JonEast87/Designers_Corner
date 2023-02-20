@@ -32,7 +32,7 @@
             <div class="media-content">
                 <div id="description" class="card-content">
                     <div class="content">
-                        <h2 class="subtitle">Bio</h2>
+                        <h2 class="subtitle">Project Description</h2>
                         <%= portfolio.description %>
                     </div>
                 </div>
@@ -56,6 +56,9 @@
 </div>
 
 <div class="column is-4">
+    <% if (user.profileExists === false) { %>
+        <div></div>
+    <% } else { %>
     <nav class="panel mt-6" aria-label="skills">
         <p class="panel-heading">Personal Skills</p>
 
@@ -82,10 +85,14 @@
 
     <div class="card-content">
         <div class="content">
+            <h2 class="subtitle">Bio</h2>
             <p><%= user.profile.bio %></p>
         </div>
     </div>
+    <% } %>
+
     <hr>
+
     <% if ((currentUser) && (currentUser.id === user.id)) { %>
         <div class="buttons is-grouped is-centered">
             <% if (user.profileExists === false) { %>

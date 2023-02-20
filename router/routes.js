@@ -304,6 +304,8 @@ app.get("/add", ensureAuthenticated, async (req, res) => {
 app.post("/add", ensureAuthenticated, async (req, res, next) => {
     try {
         const user = await User.findById(res.locals.currentUser._id);
+        const enteredTags = req.body.tags.split(", ");
+        const splicedTags = enteredTags.splice(0, 3);
 
         if (user.portfolioExists === true) {
             req.flash("error", "Portfolio already exists, you can only have one portfolio at a time.");
@@ -314,12 +316,10 @@ app.post("/add", ensureAuthenticated, async (req, res, next) => {
                 author: res.locals.currentUser.username,
                 authorId: res.locals.currentUser._id,
                 description: req.body.description,
-                images: req.body.images,
-                // imageOfTwo: req.body.imageOfTwo,
-                // imageOfThree: req.body.imageOfThree,
-                tags: req.body.tags,
+                images: [req.body.image1, req.body.image2, req.body.image3],
+                tags: splicedTags,
                 title: req.body.title,
-                url: req.body.url
+                url: req.body.live,
             };
             user.portfolioExists = true;
             await user.save(next);
@@ -486,7 +486,7 @@ app.post("/jobs", ensureAuthenticated, async (req, res) => {
 // --- EDIT JOB ---
 app.get("/jobs/:job", ensureAuthenticated, checkPoster, async (req, res) => {
 
-})
+});
 
 app.patch("/jobs/", ensureAuthenticated, checkPoster, async (req, res) => {
 

@@ -7,7 +7,7 @@ const portfolioSchema = new Schema({
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     createdAt: { type: Date, default: Date.now() },
     description: { type: String, required: true },
-    images: [{ type: String, required: true }],
+    images: [{ type: String, required: false }],
     title: { type: String, require: true },
     tags: [{ type: String, required: false }],
     url: { type: String, required: false }

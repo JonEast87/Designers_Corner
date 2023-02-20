@@ -2,47 +2,48 @@
 
 <div class="column is-4">
     <form action="/add" method="POST">
-        <div class="container is-max-desktop">
+        <div class="container is-max-desktop mt-6">
             <h2 class="subtitle">Add your Portfolio</h2>
 
             <div class="field">
                 <label for="title" class="label">Portfolio Name</label>
-                <input class="input" id="title" name="title" type="text" required autofocus>
+                <input class="input is-primary" id="title" name="title" type="text" required autofocus>
             </div>
 
             <div class="field">
-                <label for="images" class="label">Images (max of thee)</label>
-                <input class="input" id="images" name="images" type="text" required>
+                <label for="image1" class="label">Image</label>
+                <input class="input is-primary" id="image1" name="image1" type="text" required>
             </div>
 
-<!--                    <div class="field">-->
-<!--                        <label for="imageOfTwo" class="label">Image #2</label>-->
-<!--                        <input class="input" id="imageOfTwo" name="imageOfTwo" type="text" required>-->
-<!--                    </div>-->
+            <div class="field">
+                <label for="image2" class="label">Image #2</label>
+                <input class="input is-primary" id="image2" name="image2" type="text" required>
+            </div>
 
-<!--                    <div class="field">-->
-<!--                        <label for="imageOfThree" class="label">Image #3</label>-->
-<!--                        <input class="input" id="imageOfThree" name="imageOfThree" type="text" required>-->
-<!--                    </div>-->
+            <div class="field">
+                <label for="image3" class="label">Image #3</label>
+                <input class="input is-primary" id="image3" name="image3" type="text" required>
+            </div>
 
             <div class="field">
                 <label for="tags" class="label">Tags</label>
-                <input class="input" id="tags" name="portfolio[tags]" type="hidden" value="Fintech,Adobe,Design">
+                <input class="input is-primary" id="tags" name="tags" value="Fintech, B2B, Commerce">
+                <p class="help">Ensure your three entries are separated with a space and comma.</p>
             </div>
 
             <div class="field">
                 <label for="live" class="label">Live Demo</label>
-                <input class="input" id="live" name="live" type="text">
+                <input class="input is-primary" id="live" name="live" type="text">
             </div>
 
             <div class="field">
               <span class="input-group-text">With textarea</span>
-              <textarea class="textarea" name="description" aria-label="With textarea"></textarea>
+              <textarea class="textarea is-primary" name="description" aria-label="With textarea"></textarea>
             </div>
 
             <div class="field is-grouped">
                 <p class="control">
-                    <button class="input has-text-white has-background-link">Add Portfolio</button>
+                    <button class="input has-text-white has-background-primary">Add Portfolio</button>
                 </p>
                 <p class="control">
                     <a class="input has-text-white has-background-info" href="/">Cancel</a>
