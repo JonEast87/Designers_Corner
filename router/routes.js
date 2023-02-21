@@ -340,11 +340,11 @@ app.post("/add", ensureAuthenticated, async (req, res, next) => {
 app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) => {
     // Using async call since this function returns more than one promise
     try {
-        const user = await User.findById(res.locals.currentUser._id);
-        const portfolio = user.portfolio;
-        const portfolioComments = await user.populate("portfolio.comments");
-        res.status(200).render("portfolios/view-portfolio", { portfolio: portfolio, comments: portfolio.comments });
+        const portfolioAuthor = await User.findOne().where('portfolio.title').equals(req.params.portfolio);
+        await portfolioAuthor.populate("portfolio.comments");
+        res.status(200).render("portfolios/view-portfolio", { portfolio: portfolioAuthor.portfolio, comments: portfolioAuthor.portfolio.comments });
     } catch (error) {
+        console.log(error)
         res.status(404).send({ error: "Post does not match." });
     }
 });
@@ -415,9 +415,9 @@ app.post("/portfolios/:portfolio/add_comment", ensureAuthenticated, async (req, 
 
     try {
         const savedComment = await newComment.save();
-        const user = await User.findById(res.locals.currentUser._id);
-        user.portfolio.comments.push(newComment);
-        user.save(next);
+        const portfolioAuthor = await User.findOne().where('portfolio.title').equals(req.params.portfolio);
+        portfolioAuthor.portfolio.comments.push(newComment);
+        await portfolioAuthor.save();
         req.flash("info", "Comment added.");
         res.status(201).redirect("/");
     } catch (error) {

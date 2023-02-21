@@ -16,11 +16,6 @@
                     <a href="/portfolios/<%= portfolio.title %>"><i class="fa-regular fa-folder-open"></i></a>
                 </span>
             </button>
-            <button class="card-header-icon" aria-label="comment">
-                <span class="icon">
-                    <a href="/portfolios/<%= portfolio.title %>/add_comment"><i class="fa-solid fa-comment"></i></a>
-                </span>
-            </button>
             <button class="card-header-icon" aria-label="like">
                 <span class="icon">
                     <a href="#"><i class="fa-solid fa-heart"></i></a>
@@ -68,7 +63,7 @@
     <hr>
     <% if (comments.length >= 1) { %>
     <% comments.forEach(function(comment) { %>
-        <article class="message is-link p-2">
+        <article class="message p-2">
             <div class="message-header">
                 <%= comment.author %>
             <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
@@ -81,7 +76,7 @@
                 <%= comment.comment %>
             </div>
             <% if ((currentUser) && (currentUser.id === comment.authorID.toString())) { %>
-                <a class="button is-link" href="/portfolios/<%= portfolio.title %>/edit_comment/<%= comment._id.toString() %>">Edit Comment</a>
+                <a class="button is-primary" href="/portfolios/<%= portfolio.title %>/edit_comment/<%= comment._id.toString() %>">Edit Comment</a>
             <% } %>
         </article>
     <% }); %>
