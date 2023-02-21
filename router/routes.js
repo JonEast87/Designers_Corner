@@ -17,7 +17,19 @@ app.use(function(req, res, next) {
     next();
 });
 
-// --- Authentication and Registration --- //
+// --- Authentication, Registration and Middleware Helpers --- //
+const collectPortfolios = async (req, res) => {
+    const users = await User.find();
+    let portfolios = new Array();
+
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].portfolio !== undefined) {
+            portfolios.push(users[i].portfolio);
+        }
+    return portfolios;
+    }
+}
+
 function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         next();
@@ -41,12 +53,17 @@ const checkUser = async (req, res, next) => {
 }
 
 const checkAuthor = async (req, res, next) => {
-    const portfolio = req.params.portfolios;
-    const data = await User.findOne({ title: portfolio });
-    const currentUserID = res.locals.currentUser._id;
-    if (data.authorId.equals(currentUserID)) {
+    // find post author
+    const author = await User.findOne().where('portfolio.title').equals(req.params.portfolios);
+    // find current user
+    const currentUser = res.locals.currentUser;
+
+    // check if current user is the author
+    if (author._id.equals(currentUser._id)) {
+        // permit if true
         next();
     } else {
+        // deny if false
         req.flash("error", "You are not the author of this content.");
         res.status(403).redirect("/");
     }
@@ -275,18 +292,6 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 // --- PORTFOLIOS --- //
 
 // --- LIST PORTFOLIOS ---
-const collectPortfolios = async (req, res) => {
-    const users = await User.find()
-    let portfolios = new Array();
-
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].portfolio !== undefined) {
-            portfolios.push(users[i].portfolio);
-        }
-    return portfolios;
-    }
-}
-
 app.get("/", ensureAuthenticated, async(req, res, next) => {
     try {
         const portfolios = await collectPortfolios(req, res);
@@ -346,7 +351,13 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
 
 // --- UPDATE PORTFOLIO ---
 app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async (req, res) => {
-   try {
+    if (user.portfolioExists === false) {
+            req.flash("error", "Portfolio does not exist. You have to create one first to edit it.");
+            res.status(409);
+            return res.redirect("/add");
+    }
+
+    try {
        const user = await User.findById(res.locals.currentUser._id);
        const portfolio = user.portfolio;
        res.status(200).render("portfolios/edit-portfolio", { portfolio: portfolio });
@@ -355,16 +366,26 @@ app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async 
    }
 });
 
-app.patch("/portfolios/:portfolio", ensureAuthenticated, checkAuthor, async (req, res) => {
-    const options = { new: true };
-    const updatedData = req.body;
-
+app.patch("/portfolios/:portfolio/edit", ensureAuthenticated, async (req, res, next) => {
     try {
-        let portfolio = await Portfolio.findOne({ title: req.params.portfolio });
-        await Portfolio.findByIdAndUpdate(portfolio._id, updatedData, options);
+        const user = await User.findById(res.locals.currentUser._id);
+        const enteredTags = req.body.tags.split(", ");
+        const splicedTags = enteredTags.splice(0, 3);
+
+        user.portfolio = {
+            author: res.locals.currentUser.username,
+            authorId: res.locals.currentUser._id,
+            description: req.body.description,
+            images: [req.body.image1, req.body.image2, req.body.image3],
+            tags: splicedTags,
+            title: req.body.title,
+            url: req.body.live,
+        };
+        await user.save();
         req.flash("info", "Portfolio has been updated.");
-        res.status(201).redirect("/portfolios/" + req.body.title);
+        return res.status(201).redirect("/");
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "Portfolio does not match." });
     }
 });
