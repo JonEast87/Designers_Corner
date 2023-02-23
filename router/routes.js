@@ -21,13 +21,15 @@ app.use(function(req, res, next) {
 const collectPortfolios = async (req, res) => {
     const users = await User.find();
     let portfolios = new Array();
-
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].portfolio !== undefined) {
+    let i = 0;
+    console.log(users.length);
+    while (i < users.length) {
+        if (users[i].portfolioExists === true) {
             portfolios.push(users[i].portfolio);
         }
-    return portfolios;
+        i++;
     }
+    return portfolios;
 }
 
 function ensureAuthenticated(req, res, next) {
