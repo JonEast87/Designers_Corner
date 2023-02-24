@@ -29,6 +29,7 @@
                 <% if (currentUser) { %>
                     <% if (currentUser.portfolioExists === true) { %>
                         <a class="navbar-item action-button" href="/portfolios/<%= currentUser.portfolio.title %>/edit"><i class="fa-regular fa-folder-closed"></i></a>
+                        <a class="navbar-item action-button" href="/add_job"><i class="fa-solid fa-briefcase"></i></a>
                     <% } else if (currentUser.portfolioExists === false) { %>
                         <a class="navbar-item action-button" href="/add"><i class="fa-regular fa-folder-open"></i></a>
                     <% } %>

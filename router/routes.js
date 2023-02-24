@@ -22,7 +22,6 @@ const collectPortfolios = async (req, res) => {
     const users = await User.find();
     let portfolios = new Array();
     let i = 0;
-    console.log(users.length);
     while (i < users.length) {
         if (users[i].portfolioExists === true) {
             portfolios.push(users[i].portfolio);
@@ -346,7 +345,6 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
         await portfolioAuthor.populate("portfolio.comments");
         res.status(200).render("portfolios/view-portfolio", { portfolio: portfolioAuthor.portfolio, comments: portfolioAuthor.portfolio.comments });
     } catch (error) {
-        console.log(error)
         res.status(404).send({ error: "Post does not match." });
     }
 });
@@ -387,7 +385,6 @@ app.patch("/portfolios/:portfolio/edit", ensureAuthenticated, async (req, res, n
         req.flash("info", "Portfolio has been updated.");
         return res.status(201).redirect("/");
     } catch (error) {
-        console.log(error);
         res.status(404).send({ error: "Portfolio does not match." });
     }
 });
@@ -481,10 +478,38 @@ app.get("/jobs", ensureAuthenticated, async (req, res) => {
     res.status(201).render("jobs/view-jobs");
 });
 
-// --- VIEW JOB ---
+// --- CREATE JOB ---
+app.get("/add_job", ensureAuthenticated, async (req, res) => {
+    try {
+        res.status(201).render("jobs/add-jobs");
+    } catch (error) {
+        res.status(404).send({ error: "No create job exists." });
+    }
+});
+
+app.post("/add_job", ensureAuthenticated, async (req, res) => {
+    const newJob = new Job({
+        companyName: req.body.name,
+        jobDescription: req.body.description,
+        jobSkills: req.body.skills,
+        jobTitle: req.body.title,
+        projectTypes: req.body.tags,
+    });
+    const user = await User.findOne({ username: req.params.username });
+
+    try {
+        req.flash("info", "You have successfully created an job posting.");
+        await newJob.save();
+        res.status(201).redirect("/");
+    } catch (error) {
+        res.status(404).send({ error: "Resource not found." });
+    }
+});
+
+// --- READ JOB ---
 app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
     const job = req.params.job;
-    const data = Job.findBy({ jobTitle: data });
+    const data = await Job.findOne({ jobTitle: job });
 
     try {
         res.status(201).render("jobs/view-job", { job: data });
@@ -493,18 +518,6 @@ app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
     }
 });
 
-// --- CREATE JOB ---
-app.get("/jobs/post_job", ensureAuthenticated, async (req, res) => {
-    try {
-        res.status(201).render("jobs/add-job");
-    } catch (error) {
-        res.status(404).send({ error: "No create job exists." });
-    }
-});
-
-app.post("/jobs", ensureAuthenticated, async (req, res) => {
-
-});
 
 // --- EDIT JOB ---
 app.get("/jobs/:job", ensureAuthenticated, checkPoster, async (req, res) => {

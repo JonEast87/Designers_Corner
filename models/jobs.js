@@ -6,7 +6,7 @@ const jobSchema = new Schema({
     createdAt: { type: Date, default: Date.now() },
     companyRating: { type: Number, required: false },
     companyName: { type: String, required: true },
-    peopleApplied: { type: mongoose.Schema.Types.ObjectId, required: false },
+    peopleApplied: [{ type: mongoose.Schema.Types.ObjectId, required: false }],
     jobDescription: { type: String, required: true },
     jobSkills: [{ type: String, required: true }],
     jobTitle: { type: String, required: true },

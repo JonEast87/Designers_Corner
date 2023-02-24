@@ -1,0 +1,47 @@
+<%- include("../partials/_header") %>
+
+<div class="column is-half">
+    <article class="card mt-6">
+        <header class="card-header">
+            <p class="card-header-title">
+                <%= job.jobTitle %>
+            </p>
+        </header>
+        <div class="media mt-4 pl-2 pr-2">
+            <div class="media-content">
+                <div class="card-content">
+                    <div class="content">
+                        <%= job.projectTypes[0] %>
+                    </div>
+
+                    <div class="content">
+                        <%= job.jobSkills[0] %>
+                        <%= job.jobSkills[1] %>
+                        <%= job.jobSkills[2] %>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="card-content">
+                    <div class="content">
+                        <h2 class="subtitle">Job Description</h2>
+                        <%= job.jobDescription %>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% if (currentUser) { %>
+        <footer class="card-footer">
+            <div class="media pl-2 pr-2 pb-2">
+                <div class="media-content">
+                    <form action="#" method="POST">
+                        <button class="button is-primary">Apply</button>
+                    </form>
+                </div>
+            </div>
+        </footer>
+        <% } %>
+    </article>
+</div>
+
+<%- include("../partials/_footer") %>
