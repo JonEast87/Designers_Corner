@@ -1,45 +1,55 @@
 <%- include("../partials/_header") %>
 
-<div class="column is-half">
+<div class="column is-half mt-6">
     <article class="card mt-6">
         <header class="card-header">
             <p class="card-header-title">
                 <%= job.jobTitle %>
             </p>
+            <button class="card-header-icon" aria-label="open">
+                <span class="icon">
+                    <a href="/jobs/<%= job.jobTitle %>"><i class="fa-solid fa-door-open"></i></a>
+                </span>
+            </button>
+            <button class="card-header-icon" aria-label="edit">
+                <span class="icon">
+                    <a href="/jobs/<%= job.jobTitle %>/edit_job"><i class="fa-solid fa-pen"></i></a>
+                </span>
+            </button>
         </header>
         <div class="media mt-4 pl-2 pr-2">
             <div class="media-content">
                 <div class="card-content">
                     <div class="content">
-                        <%= job.projectTypes[0] %>
-                    </div>
+                        <h4 class="title is-4">Project Type</h4>
+                        <p><%= job.projectTypes[0] %></p>
 
-                    <div class="content">
-                        <%= job.jobSkills[0] %>
-                        <%= job.jobSkills[1] %>
-                        <%= job.jobSkills[2] %>
-                    </div>
-                </div>
-
-                <hr>
-                <div class="card-content">
-                    <div class="content">
-                        <h2 class="subtitle">Job Description</h2>
-                        <%= job.jobDescription %>
+                        <p>--- --- --- --- ---</p>
+                        <h4 class="subtitle is-4">Project Skills</h4>
+                        <p>The skills required for this position are:
+                            <%= job.jobSkills[0] %>,
+                            <%= job.jobSkills[1] %>,
+                            and <%= job.jobSkills[2] %>.
+                        </p>
+                        <p>--- --- --- --- ---</p>
+                        <h4 class="subtitle is-4">Project Description</h4>
+                        <p><%= job.jobDescription %></p>
                     </div>
                 </div>
             </div>
         </div>
+
         <% if (currentUser) { %>
-        <footer class="card-footer">
-            <div class="media pl-2 pr-2 pb-2">
-                <div class="media-content">
+            <footer class="card-footer">
+                <div class="card-footer-item">
                     <form action="#" method="POST">
                         <button class="button is-primary">Apply</button>
                     </form>
                 </div>
-            </div>
-        </footer>
+                <div class="card-footer-item">
+                    Applicants applied: <%= job.peopleApplied.length %>
+                </div>
+            </footer>
         <% } %>
     </article>
 </div>

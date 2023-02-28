@@ -1,7 +1,7 @@
 <%- include("../partials/_header") %>
 
 <div class="column is-4">
-    <form action="/jobs/<%= job.jobTitle %>?_method=PATCH" method="POST">
+    <form action="/jobs/<%= job.jobTitle %>/edit_job?_method=PATCH" method="POST">
         <div class="container is-max-desktop mt-6">
             <h2 class="subtitle">Edit your Job Posting</h2>
 
@@ -12,28 +12,28 @@
 
             <div class="field">
                 <label for="title" class="label">Job Title</label>
-                <input class="input is-primary" id="title" name="title">
+                <input class="input is-primary" id="title" name="title" value="<%= job.jobTitle %>">
             </div>
 
             <div class="field">
                 <label for="tags" class="label">Project Type</label>
-                <input class="input is-primary" id="tags" name="tags" placeholder="Fintech">
+                <input class="input is-primary" id="tags" name="tags" value="<%= job.projectTypes %>">
             </div>
 
             <div class="field">
                 <label for="skills" class="label">Job Skills</label>
-                <input class="input is-primary" id="skills" name="skills" placeholder="Fintech, B2B, Commerce">
+                <input class="input is-primary" id="skills" name="skills" value="<%= job.jobSkills.join(", ") %>">
                 <p class="help">Ensure your three entries are separated with a space and comma.</p>
             </div>
 
             <div class="field">
               <span class="input-group-text">Job Description</span>
-              <textarea class="textarea is-primary" name="description" aria-label="With textarea"></textarea>
+              <textarea class="textarea is-primary" name="description" aria-label="With textarea"><%= job.jobDescription %></textarea>
             </div>
 
             <div class="field is-grouped">
                 <p class="control">
-                    <button class="input has-text-white has-background-primary">Add Job</button>
+                    <button class="input has-text-white has-background-primary">Edit Job</button>
                 </p>
                 <p class="control">
                     <a class="input has-text-white has-background-info" href="/">Cancel</a>

@@ -73,9 +73,10 @@ const checkAuthor = async (req, res, next) => {
 const checkPoster = async (req, res, next) => {
     const job = req.params.job;
     const data = await Job.findOne({ jobTitle: job });
-    const currentUserID = res.locals.currentUser._id;
+    const currentUser = res.locals.currentUser;
+    console.log(data.jobPosterID)
 
-    if (data.jobPosterID === currentUserID) {
+    if (data.jobPosterID.equals(currentUser._id)) {
         next();
     } else {
         req.flash("error", "You are not the job poster. Access restricted.");
@@ -355,9 +356,9 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
 app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async (req, res) => {
    const user = await User.findById(res.locals.currentUser._id);
     if (user.portfolioExists === false) {
-            req.flash("error", "Portfolio does not exist. You have to create one first to edit it.");
-            res.status(409);
-            return res.redirect("/add");
+        req.flash("error", "Portfolio does not exist. You have to create one first to edit it.");
+        res.status(409);
+        return res.redirect("/add");
     }
 
     try {
@@ -492,12 +493,11 @@ app.post("/add_job", ensureAuthenticated, async (req, res) => {
     const newJob = new Job({
         companyName: req.body.name,
         jobDescription: req.body.description,
-        jobPosterID: res.locals.currentUser_id,
+        jobPosterID: res.locals.currentUser._id,
         jobSkills: splicedSkills,
         jobTitle: req.body.title,
         projectTypes: req.body.tags,
     });
-    const user = await User.findOne({ username: req.params.username });
 
     try {
         req.flash("info", "You have successfully created an job posting.");
@@ -523,7 +523,7 @@ app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
 // --- UPDATE JOB ---
 app.get("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res) => {
     try {
-        const job = Job.findOne({ jobTitle: req.params.job });
+        const job = await Job.findOne({ jobTitle: req.params.job });
         res.status(200).render("jobs/edit-job", { job: job });
     } catch(error) {
         res.status(404).send({ error: "Cannot edit job." });
@@ -531,22 +531,25 @@ app.get("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res
 });
 
 app.patch("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res) => {
-    // const user = await User.findOne({ username: req.params.username });
-
     try {
+        let foundJob = await Job.findOne({ jobTitle: req.params.job });
         const enteredSkills = req.body.skills.split(", ");
         const splicedSkills = enteredSkills.splice(0, 3);
-        const foundJob = await Job.find({ jobTitle: req.params.job });
-        foundJob.companyName = req.body.name;
-        foundJob.jobDescription = req.body.description;
-        foundJob.jobPosterID = res.locals.currentUser_id;
-        foundJob.jobSkills = splicedSkills;
-        foundJob.jobTitle = req.body.title;
-        foundJob.projectTypes = req.body.tags;
-        req.flash("info", "You have successfully edited your job posting.");
+
+        foundJob = {
+            companyName: req.body.name,
+            jobDescription: req.body.description,
+            jobPosterID: res.locals.currentUser_id,
+            jobSkills: splicedSkills,
+            jobTitle: req.body.title,
+            projectTypes: req.body.tags
+        }
+
         await foundJob.save();
+        req.flash("info", "You have successfully edited your job posting.");
         res.status(201).redirect("/");
     } catch (error) {
+        console.log(error);
         res.status(404).send({ error: "Resource not found." });
     }
 });
