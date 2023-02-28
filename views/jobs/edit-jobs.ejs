@@ -1,0 +1,46 @@
+<%- include("../partials/_header") %>
+
+<div class="column is-4">
+    <form action="/jobs/<%= job.jobTitle %>?_method=PATCH" method="POST">
+        <div class="container is-max-desktop mt-6">
+            <h2 class="subtitle">Edit your Job Posting</h2>
+
+            <div class="field">
+                <label for="name" class="label">Company Name</label>
+                <input class="input is-primary" id="name" name="name" type="text" value="<%= job.companyName %>">
+            </div>
+
+            <div class="field">
+                <label for="title" class="label">Job Title</label>
+                <input class="input is-primary" id="title" name="title">
+            </div>
+
+            <div class="field">
+                <label for="tags" class="label">Project Type</label>
+                <input class="input is-primary" id="tags" name="tags" placeholder="Fintech">
+            </div>
+
+            <div class="field">
+                <label for="skills" class="label">Job Skills</label>
+                <input class="input is-primary" id="skills" name="skills" placeholder="Fintech, B2B, Commerce">
+                <p class="help">Ensure your three entries are separated with a space and comma.</p>
+            </div>
+
+            <div class="field">
+              <span class="input-group-text">Job Description</span>
+              <textarea class="textarea is-primary" name="description" aria-label="With textarea"></textarea>
+            </div>
+
+            <div class="field is-grouped">
+                <p class="control">
+                    <button class="input has-text-white has-background-primary">Add Job</button>
+                </p>
+                <p class="control">
+                    <a class="input has-text-white has-background-info" href="/">Cancel</a>
+                </p>
+            </div>
+        </div>
+    </form>
+</div>
+
+<%- include("../partials/_footer") %>

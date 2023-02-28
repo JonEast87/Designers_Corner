@@ -71,7 +71,7 @@ const checkAuthor = async (req, res, next) => {
 }
 
 const checkPoster = async (req, res, next) => {
-    const job = req.params.jobs;
+    const job = req.params.job;
     const data = await Job.findOne({ jobTitle: job });
     const currentUserID = res.locals.currentUser._id;
 
@@ -82,6 +82,18 @@ const checkPoster = async (req, res, next) => {
         res.status(403).redirect("/jobs");
     }
 }
+
+// --- LIST PORTFOLIOS AND JOBS --- //
+
+app.get("/", ensureAuthenticated, async(req, res, next) => {
+    try {
+        const portfolios = await collectPortfolios(req, res);
+        const jobs = await Job.find();
+        res.status(200).render("index", { portfolios: portfolios, jobs: jobs });
+    } catch (error) {
+        res.status(404).send({ error: "No portfolios." });
+    }
+});
 
 // --- USERS --- //
 
@@ -292,16 +304,6 @@ app.patch("/profiles/edit_profile", ensureAuthenticated, async (req, res) => {
 
 // --- PORTFOLIOS --- //
 
-// --- LIST PORTFOLIOS ---
-app.get("/", ensureAuthenticated, async(req, res, next) => {
-    try {
-        const portfolios = await collectPortfolios(req, res);
-        res.status(200).render("index", { portfolios: portfolios });
-    } catch (error) {
-        res.status(404).send({ error: "No portfolios." });
-    }
-});
-
 // --- CREATE PORTFOLIO ---
 app.get("/add", ensureAuthenticated, async (req, res) => {
     res.render("portfolios/add-portfolio");
@@ -351,6 +353,7 @@ app.get("/portfolios/:portfolio", ensureAuthenticated, async (req, res, next) =>
 
 // --- UPDATE PORTFOLIO ---
 app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async (req, res) => {
+   const user = await User.findById(res.locals.currentUser._id);
     if (user.portfolioExists === false) {
             req.flash("error", "Portfolio does not exist. You have to create one first to edit it.");
             res.status(409);
@@ -358,7 +361,6 @@ app.get("/portfolios/:portfolios/edit", ensureAuthenticated, checkAuthor, async 
     }
 
     try {
-       const user = await User.findById(res.locals.currentUser._id);
        const portfolio = user.portfolio;
        res.status(200).render("portfolios/edit-portfolio", { portfolio: portfolio });
    } catch(error) {
@@ -474,9 +476,6 @@ app.delete("/portfolios/:portfolio/comment/:comment", ensureAuthenticated, async
 // --- JOBS --- //
 
 // --- LIST JOBS ---
-app.get("/jobs", ensureAuthenticated, async (req, res) => {
-    res.status(201).render("jobs/view-jobs");
-});
 
 // --- CREATE JOB ---
 app.get("/add_job", ensureAuthenticated, async (req, res) => {
@@ -488,10 +487,13 @@ app.get("/add_job", ensureAuthenticated, async (req, res) => {
 });
 
 app.post("/add_job", ensureAuthenticated, async (req, res) => {
+    const enteredSkills = req.body.skills.split(", ");
+    const splicedSkills = enteredSkills.splice(0, 3);
     const newJob = new Job({
         companyName: req.body.name,
         jobDescription: req.body.description,
-        jobSkills: req.body.skills,
+        jobPosterID: res.locals.currentUser_id,
+        jobSkills: splicedSkills,
         jobTitle: req.body.title,
         projectTypes: req.body.tags,
     });
@@ -518,14 +520,35 @@ app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
     }
 });
 
-
-// --- EDIT JOB ---
-app.get("/jobs/:job", ensureAuthenticated, checkPoster, async (req, res) => {
-
+// --- UPDATE JOB ---
+app.get("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res) => {
+    try {
+        const job = Job.findOne({ jobTitle: req.params.job });
+        res.status(200).render("jobs/edit-job", { job: job });
+    } catch(error) {
+        res.status(404).send({ error: "Cannot edit job." });
+    }
 });
 
-app.patch("/jobs/", ensureAuthenticated, checkPoster, async (req, res) => {
+app.patch("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res) => {
+    // const user = await User.findOne({ username: req.params.username });
 
+    try {
+        const enteredSkills = req.body.skills.split(", ");
+        const splicedSkills = enteredSkills.splice(0, 3);
+        const foundJob = await Job.find({ jobTitle: req.params.job });
+        foundJob.companyName = req.body.name;
+        foundJob.jobDescription = req.body.description;
+        foundJob.jobPosterID = res.locals.currentUser_id;
+        foundJob.jobSkills = splicedSkills;
+        foundJob.jobTitle = req.body.title;
+        foundJob.projectTypes = req.body.tags;
+        req.flash("info", "You have successfully edited your job posting.");
+        await foundJob.save();
+        res.status(201).redirect("/");
+    } catch (error) {
+        res.status(404).send({ error: "Resource not found." });
+    }
 });
 
 // --- DELETE JOB ---

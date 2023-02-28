@@ -68,8 +68,72 @@
             </div>
             <% } %>
         </article>
-        <hr>
         <% }) %>
+    <% } else { %>
+        <article></article>
+    <% } %>
+</div>
+
+<div class="column is-1 mt-6">
+    <div></div>
+</div>
+
+<div class="column is-4 mt-6">
+    <h2 class="title">UX Design Jobs</h2>
+    <% if (jobs.length >= 1) { %>
+        <% jobs.forEach(function(job) {%>
+        <article class="card mt-6">
+            <header class="card-header">
+                <p class="card-header-title">
+                    <%= job.jobTitle %>
+                </p>
+                <button class="card-header-icon" aria-label="open">
+                    <span class="icon">
+                        <a href="/jobs/<%= job.jobTitle %>"><i class="fa-solid fa-door-open"></i></a>
+                    </span>
+                </button>
+                <button class="card-header-icon" aria-label="edit">
+                    <span class="icon">
+                        <a href="/jobs/<%= job.jobTitle %>/edit_job"><i class="fa-solid fa-pen"></i></a>
+                    </span>
+                </button>
+            </header>
+            <div class="media mt-4 pl-2 pr-2">
+                <div class="media-content">
+                    <div class="card-content">
+                        <div class="content">
+                            <h4 class="title is-4">Project Type</h4>
+                            <p><%= job.projectTypes[0] %></p>
+
+                            <p>--- --- --- --- ---</p>
+                            <h4 class="subtitle is-4">Project Skills</h4>
+                            <p>The skills required for this position are:
+                                <%= job.jobSkills[0] %>,
+                                <%= job.jobSkills[1] %>,
+                                and <%= job.jobSkills[2] %>.
+                            </p>
+                            <p>--- --- --- --- ---</p>
+                            <h4 class="subtitle is-4">Project Description</h4>
+                            <p><%= job.jobDescription %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <% if (currentUser) { %>
+                <footer class="card-footer">
+                    <div class="card-footer-item">
+                        <form action="#" method="POST">
+                            <button class="button is-primary">Apply</button>
+                        </form>
+                    </div>
+                    <div class="card-footer-item">
+                        Applicants applied: <%= job.peopleApplied.length %>
+                    </div>
+                </footer>
+            <% } %>
+        </article>
+        <% }); %>
     <% } else { %>
         <article></article>
     <% } %>

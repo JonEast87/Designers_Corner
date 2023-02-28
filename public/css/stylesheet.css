@@ -3762,13 +3762,13 @@ a.tag:hover {
 }
 .breadcrumb a {
   align-items: center;
-  color: #F7F5FF;
+  color: #000;
   display: flex;
   justify-content: center;
   padding: 0 0.75em;
 }
 .breadcrumb a:hover {
-  color: hsl(0, 0%, 21%);
+  color: #000;
 }
 .breadcrumb li {
   align-items: center;
@@ -3778,7 +3778,7 @@ a.tag:hover {
   padding-left: 0;
 }
 .breadcrumb li.is-active a {
-  color: hsl(0, 0%, 21%);
+  color: #000;
   cursor: default;
   pointer-events: none;
 }
