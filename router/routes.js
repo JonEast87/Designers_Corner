@@ -74,7 +74,6 @@ const checkPoster = async (req, res, next) => {
     const job = req.params.job;
     const data = await Job.findOne({ jobTitle: job });
     const currentUser = res.locals.currentUser;
-    console.log(data.jobPosterID)
 
     if (data.jobPosterID.equals(currentUser._id)) {
         next();
@@ -531,12 +530,14 @@ app.get("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res
 });
 
 app.patch("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, res) => {
-    try {
-        let foundJob = await Job.findOne({ jobTitle: req.params.job });
-        const enteredSkills = req.body.skills.split(", ");
-        const splicedSkills = enteredSkills.splice(0, 3);
+    let foundJob = await Job.findOne({ jobTitle: req.params.job });
+    let foundJobID = foundJob._id;
+    const enteredSkills = req.body.skills.split(", ");
+    const splicedSkills = enteredSkills.splice(0, 3);
+    const options = { new: true };
 
-        foundJob = {
+    try {
+        const data = {
             companyName: req.body.name,
             jobDescription: req.body.description,
             jobPosterID: res.locals.currentUser_id,
@@ -545,7 +546,7 @@ app.patch("/jobs/:job/edit_job", ensureAuthenticated, checkPoster, async (req, r
             projectTypes: req.body.tags
         }
 
-        await foundJob.save();
+        const updatedJob = await Job.findByIdAndUpdate(foundJobID, data, options);
         req.flash("info", "You have successfully edited your job posting.");
         res.status(201).redirect("/");
     } catch (error) {
