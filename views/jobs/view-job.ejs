@@ -50,8 +50,22 @@
                     Applicants applied: <%= job.peopleApplied.length %>
                 </div>
             </footer>
-        <% } %>
     </article>
+        <% } %>
+
+        <% if (currentUser) { %>
+            <% if (job.peopleApplied.length >= 1) { %>
+            <% job.peopleApplied.forEach(function(people) { %>
+            <article class="card mt-6">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <%= people %>
+                    </p>
+                </header>
+            </article>
+            <% }); %>
+            <% } %>
+        <% } %>
 </div>
 
 <%- include("../partials/_footer") %>

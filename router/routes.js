@@ -512,6 +512,7 @@ app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
     const job = req.params.job;
     const data = await Job.findOne({ jobTitle: job });
 
+
     try {
         res.status(201).render("jobs/view-job", { job: data });
     } catch (error) {
@@ -563,7 +564,6 @@ app.delete("/jobs/:job", ensureAuthenticated, checkPoster, async (req, res) => {
 
 // --- APPLYING TO JOBS //
 app.patch("/jobs/:job/applied", ensureAuthenticated, async (req, res) => {
-
     try {
         const foundJob = await Job.findOne({ jobTitle: req.params.job });
         const foundJobID = foundJob._id;
