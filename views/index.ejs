@@ -123,7 +123,7 @@
             <% if (currentUser) { %>
                 <footer class="card-footer">
                     <div class="card-footer-item">
-                        <form action="#" method="POST">
+                        <form action="/jobs/<%= job.jobTitle %>/applied?_method=PATCH" method="POST">
                             <button class="button is-primary">Apply</button>
                         </form>
                     </div>

@@ -562,16 +562,20 @@ app.delete("/jobs/:job", ensureAuthenticated, checkPoster, async (req, res) => {
 
 
 // --- APPLYING TO JOBS //
-app.patch("/job/:job/applied", ensureAuthenticated, async (req, res) => {
+app.patch("/jobs/:job/applied", ensureAuthenticated, async (req, res) => {
 
     try {
         const foundJob = await Job.findOne({ jobTitle: req.params.job });
         const foundJobID = foundJob._id;
         const user = res.locals.currentUser;
         foundJob.peopleApplied.push(user);
+        await foundJob.save();
+        req.flash("Info", "You have applied to this position.");
+        res.status(201).redirect("/");
     } catch (error) {
         console.log(error);
         res.status(404).send({ error: "Could not apply to this listing." });
     }
 });
+
 module.exports = app;
