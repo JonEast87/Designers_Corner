@@ -58,10 +58,20 @@
             <% users.forEach(function(user) { %>
             <article class="card mt-6">
                 <header class="card-header">
+                    <button class="card-header-icon" aria-label="user">
+                        <span class="icon">
+                            <a href="/users/<%= user.username %>"><i class="fa-solid fa-user"></i></a>
+                        </span>
+                    </button>
                     <p class="card-header-title">
                         <%= user.username %>
                     </p>
                 </header>
+                <div class="card-content">
+                    <div class="content">
+                        <%= user.profile.bio %>
+                    </div>
+                </div>
             </article>
             <% }); %>
             <% } %>
