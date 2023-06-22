@@ -511,10 +511,14 @@ app.post("/add_job", ensureAuthenticated, async (req, res) => {
 app.get("/jobs/:job", ensureAuthenticated, async (req, res) => {
     const job = req.params.job;
     const data = await Job.findOne({ jobTitle: job });
+    let userArray = new Array();
 
-
+    for (let i = 0; i < data.peopleApplied.length; i++) {
+        const userFound = await User.findById(data.peopleApplied[i]);
+        userArray.push(userFound);
+    }
     try {
-        res.status(201).render("jobs/view-job", { job: data });
+        res.status(201).render("jobs/view-job", { job: data, users: userArray });
     } catch (error) {
         res.status(404).send({ error: "No job exists." });
     }

@@ -55,11 +55,11 @@
 
         <% if (currentUser) { %>
             <% if (job.peopleApplied.length >= 1) { %>
-            <% job.peopleApplied.forEach(function(people) { %>
+            <% users.forEach(function(user) { %>
             <article class="card mt-6">
                 <header class="card-header">
                     <p class="card-header-title">
-                        <%= people %>
+                        <%= user.username %>
                     </p>
                 </header>
             </article>
